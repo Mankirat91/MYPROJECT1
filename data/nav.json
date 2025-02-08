@@ -1,0 +1,9 @@
+[
+  { "name": "home", "link": "/", "class": "nav-item nav-link" },
+  { "name": "shop", "link": "/shop.html", "class": "nav-item nav-link" },
+  {
+    "name": "shop-detail",
+    "link": "/shop-detail.html",
+    "class": "nav-item nav-link"
+  }
+]
