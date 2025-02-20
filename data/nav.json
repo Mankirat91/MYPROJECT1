@@ -1,9 +1,5 @@
 [
-  { "name": "home", "link": "/", "class": "nav-item nav-link" },
-  { "name": "shop", "link": "/shop.html", "class": "nav-item nav-link" },
-  {
-    "name": "shop-detail",
-    "link": "/shop-detail.html",
-    "class": "nav-item nav-link"
-  }
+  { "name": "home", "link": "/", "class": "nav-item nav-link","template":"/template/main/home.html" ,"nav":true ,"function":["getFeaturedCategories","getCategoryTabs","getHeaderSlider","getCartCount","cartAction"] },
+  { "name": "shop", "link": "/shop", "class": "nav-item nav-link" ,"template":"/template/main/shop.html","nav":true,"function":["getCartCount","getShopCategories","filterProductsByPrice","cartAction","sortProductByPrice","filterProductByCategory"]},
+  { "name": "cart", "link": "/cart", "class": "nav-item nav-link" ,"template":"/template/main/cart.html","nav":false,"function":["getCartCount","cartAction"]}
 ]
