@@ -92,6 +92,7 @@
       productCartAction.className="btn border border-secondary rounded-pill px-3 text-primary cart-btn"
       productCartIcon.className="fa fa-shopping-bag me-2 text-primary";
       productCartAction.setAttribute('product-id',`${product.id}`);
+      // productCartAction.setAttribute('onclick',routeWithParam(`/shop-detail?id=${product.id}`));
       
       productCartIcon.innerText="Add to cart"
   
@@ -161,11 +162,15 @@
     
   function getFeatureProductImage(product){
     var productImg= document.createElement('div');
+    var anchorImg= document.createElement('a');
+    anchorImg.href=`/shop-detail?id=${product.id}`
+    anchorImg.setAttribute('onclick',`routeTo('/shop-detail?id=${product.id}')`)
     productImg.className= 'product-thumb-img';
     var containerProductImg =document.createElement('img');
     containerProductImg.className ="img-fluid w-100 rounded-top";
     containerProductImg.src =product.thumbnailImage;
-    productImg.append(containerProductImg);
+    anchorImg.append(containerProductImg);
+    productImg.append(anchorImg);
     return productImg;
   }
   

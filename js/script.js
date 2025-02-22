@@ -43,7 +43,6 @@ function handleRouter(){
  initiateTemplate();
  initiateFunctions(currentRoute.function);
 }
- 
 
 function initiateTemplate(){
  var templates = getTemplateData()

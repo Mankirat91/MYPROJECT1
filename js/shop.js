@@ -1,6 +1,6 @@
 
 
-var filter =[{name:"price",value:1000,type:"order"},{ name:"sort",value:"asc",type:"price"},{ name:"cat",value:null,type:"find"}];
+var filter =[{name:"price",value:500,type:"order"},{ name:"sort",value:"asc",type:"price"},{ name:"cat",value:null,type:"find"}];
 var products =[];
 
 function getListProducts(){
@@ -17,6 +17,8 @@ function getListProducts(){
         html += productItem.innerHTML;
       })
       productContainer.innerHTML=html
+      var productItem =document.querySelectorAll("#product-item");
+      productItem.forEach(item=>item.classList.remove('col-xl-3') && item.classList.remove('col-xl-4'))
       return productContainer;
     }
   }
@@ -34,6 +36,7 @@ function getListProducts(){
     iItem.className="fas fa-apple-alt me-2"
     anchorItem.id="cat-anchor";
     anchorItem.setAttribute("catid",cat.id);
+    anchorItem.setAttribute("href","javascript.void(0);");
     var count= getProductsCountByCategory(cat.id);
     spanItem.innerText=`(${count})`
     listItem.append(divItem)
@@ -52,9 +55,12 @@ function getListProducts(){
     rangeInput.addEventListener('change',function(){
       var rangeValue=  document.getElementById('amount').innerText;
       for(var i=0;i<filter.length;i++){
+        if(filter[i].type=='order'){
         filter[i].value=rangeValue;
+        }
       }
       products= getProductsDataByFilter(filter);
+      console.log(products);
       getListProducts();
     })
     products= getProductsDataByFilter(filter);
@@ -95,11 +101,20 @@ function getListProducts(){
     catQuery.forEach(catQu=>{
       catQu.addEventListener('click',(e)=>{
         e.preventDefault();
+        var classListAll=[]
         var cat= catQu.getAttribute('catid');
-        catQu.className="active";
+        var hasClass=catQu.classList.contains('active');
+        catQuery.forEach(item => item.classList.remove('active'));
+       //remove all classed of anchor
+        hasClass ? catQu.classList.remove('active') :  catQu.className="active";
+        catQuery.forEach(item => {
+          var catId= catQu.getAttribute('catid');
+          if(item.classList.contains('active')) { classListAll.push(catId) }
+        });
         for(var i=0;i<filter.length;i++){
-          if(filter[i].name=="cat")
-            filter[i].value=cat;
+          if(filter[i].name=="cat"){
+            classListAll.length ? filter[i].value=cat:filter[i].value=null;
+          }
         }
         products= getProductsDataByFilter(filter);
         getListProducts();

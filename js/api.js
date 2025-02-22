@@ -1,6 +1,9 @@
 function getCurrentUrl(){
     return window.location.pathname;
    }
+   function getFullUrl(){
+    return window.location.href;
+   }
    
    function setLocalData(name,value){
      localStorage.setItem(name,value);
@@ -64,7 +67,7 @@ function getProductsDataByFilter(filter){
     data=getSortDataDec(sortItem.type,data)
   }
   if(catItem && catItem.type =='find' && catItem.value){
-    data=getProductsDataByCategory(catItem.value)
+    data=getSortDataByCategory(catItem.value,data)
   }
   return data;
 }
@@ -75,7 +78,9 @@ function getSortDataAsc(param,data){
 function getSortDataDec(param,data){
   return data.sort((a,b)=> b[param] - a[param]);
 }
-
+function getSortDataByCategory(param,data){
+  return data.filter(product=>product.categoryId == param)
+}
 function getProductsCountByCategory(catid){
   var data= getProductsDataByCategory(catid);
   return data.length;
@@ -86,3 +91,8 @@ function getProductsDataByCategory(catid){
    return products.filter(product=>product.categoryId == catid)
 }
   
+function getProductById(productid){
+  var products= getProductsData();
+  return products.filter(product=>product.id == productid)
+}
+ 
