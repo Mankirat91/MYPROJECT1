@@ -1,3 +1,9 @@
+function getGeolcation(){
+  var obj=urlRequest('http://ip-api.com/json')
+  var data= JSON.parse(obj);
+  return data.country;
+}
+getGeolcation()
 function getCurrentUrl(){
     return window.location.pathname;
    }
@@ -93,6 +99,20 @@ function getProductsDataByCategory(catid){
   
 function getProductById(productid){
   var products= getProductsData();
-  return products.filter(product=>product.id == productid)
+  return products.find(product=>product.id == productid)
 }
  
+
+function getShipping(){
+  var obj=urlRequest('/data/shipping.json')
+  var data= JSON.parse(obj);
+  return data;
+}
+ 
+
+
+function getCoupons(){
+  var obj=urlRequest('/data/coupon.json')
+  var data= JSON.parse(obj);
+  return data;
+}
