@@ -3,7 +3,24 @@ function getGeolcation(){
   var data= JSON.parse(obj);
   return data.country;
 }
-getGeolcation()
+function getUsers(){
+  var obj=urlRequest('/data/user.json')
+  var data= JSON.parse(obj);
+  return data;
+}
+
+function getUserByEmail(email){
+  var data=getUsers()
+  var email= data.find(dat=>dat.email == email)
+  return email;
+}
+
+function getUserByPassword(password){
+  var data=getUsers()
+  var password= data.find(dat=>dat.password == password)
+  return password;
+}
+
 function getCurrentUrl(){
     return window.location.pathname;
    }
@@ -115,4 +132,49 @@ function getCoupons(){
   var obj=urlRequest('/data/coupon.json')
   var data= JSON.parse(obj);
   return data;
+}
+
+
+function getMessages(){
+  var obj=urlRequest('/data/messages.json')
+  var data= JSON.parse(obj);
+  return data;
+}
+
+
+
+function getErrorContainer(text){
+ var error=  document.createElement('div');
+ error.id="error";
+ error.innerHTML=text;
+ return error;
+}
+
+
+
+function getSuccessContainer(text){
+  var error=  document.createElement('div');
+  error.id="success";
+  error.innerHTML=text;
+  return error;
+ }
+ 
+ function messageHandler(message,type){
+  var messages= document.getElementById('messages');
+  if(type == 'error') {
+    var errorContainer= getErrorContainer(message)
+    messages.innerHTML =errorContainer.outerHTML;
+  } 
+  else{
+    var successContainer= getSuccessContainer(message)
+    messages.innerHTML = successContainer.outerHTML;
+  }
+ }
+
+ function checkCartItem(productId){
+  var productsData=getLocalData('products');
+  var products=productsData ? JSON.parse(productsData) : [];
+  var product= products.find(product=>product.id == productId)
+  if(product) return true;
+   return false;
 }

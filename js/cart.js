@@ -6,6 +6,8 @@ function cartAction(){
       cartAction.addEventListener('click',function(e){
         e.preventDefault();
         var productId=this.getAttribute('product-id');
+        var check=  checkCartItem(productId)
+        if(!check){
         var product=getProductById(productId);
         var cartValue= document.getElementById('shopping-bag').innerText;
         cartValue++;
@@ -14,11 +16,19 @@ function cartAction(){
         var productsData=getLocalData('products');
         var products=productsData ? JSON.parse(productsData) : [];
         product.cartQty=1;
+        product.userId=getLoginUser()
         products.push(product);
         setLocalData('products',JSON.stringify(products));
+        cartAction.innerText="Go to cart";
+        }
+        else{
+          routeTo('/cart')
+        }
       });
     })
   }
+
+
 
   function updateCartItems(id){
     var inputElement= document.getElementById(`product-${id}`)
@@ -32,15 +42,20 @@ function cartAction(){
       subTotalPrice += product.price*product.cartQty
     })
     setSubCartTotal(subTotalPrice+" $");
+    var couponValue= getCouponValue();
+    if(couponValue){
+
+    subTotalPrice -= couponValue;
+    setCouponValue(couponValue)
+    }
     setShippingLocation()
     var shippingValue= setShippingRate();
-    setGrandTotal(subTotalPrice,shippingValue)
+    setGrandTotal(subTotalPrice,shippingValue);
   }
 
 function getCartCount(){
     document.getElementById('shopping-bag').innerText=getLocalData('cartCount') || 0;
 }
-
 
 function getCartItems(){
  var products= getLocalData('products');
@@ -52,7 +67,9 @@ function getCartBody(){
   var html=''
  var tBody=document.getElementById('cart-item');
  var products= getCartItems();
- var subTotalPrice=0;
+ var id=getLoginUser()
+ if(id) products = products.filter(pro=>pro.userId == id)
+  var subTotalPrice=0;
  if(products && products.length){
  products.forEach(product=>{
    var tr=getCartRow(product);
@@ -89,7 +106,6 @@ function getCartRow(product){
   tr.append(qty)
   tr.append(totalPrice)
   tr.append(cartAction)
-  
   return tr;
 }
 
@@ -194,7 +210,8 @@ function getProductCartAction(id){
 function addItemQty(id){
   var totalPriceElement= document.getElementById(`total-price-${id}`)
  var inputElement= document.getElementById(`product-${id}`)
- var product=getProductById(id);
+ var product=getProductById(id)
+;
  if(inputElement.value == product.qty){
   inputElement.setAttribute('disabled',true);
 }
@@ -204,12 +221,14 @@ else{
 var totalPrice=parseInt(inputElement.value) * parseInt(product.price)
 totalPriceElement.innerText=totalPrice+" $";
 updateCartItems(id)
+
 }
 
 function removeItemQty(id){
   var inputElement= document.getElementById(`product-${id}`)
   var totalPriceElement= document.getElementById(`total-price-${id}`)
-  var product=getProductById(id);
+  var product=getProductById(id)
+;
   if(inputElement.value < 2){
     inputElement.setAttribute('disabled',true);
   }
@@ -219,6 +238,7 @@ function removeItemQty(id){
   var totalPrice=parseInt(inputElement.value) * parseInt(product.price)
   totalPriceElement.innerText=totalPrice+" $";
   updateCartItems(id)
+
 }
 
 function removeProduct(id){
@@ -266,33 +286,98 @@ function setShippingLocation(){
   p.innerText = `Shipping to ${country}`;
  shippingLocation.innerHTML=p.outerHTML;
  }
-
-
 function setGrandTotal(subTotal,shippingValue){
+  var  grandTotal= subTotal+shippingValue
   var total= document.getElementById('total');
   var h5=document.createElement('h5')
   h5.className="mb-0 ps-4 me-4";
   h5.innerText = "Total";
   var p= document.createElement('p');
   p.className="mb-0 pe-4";
-  p.innerText=`$${subTotal+shippingValue}.00`
+  p.innerText=`$${grandTotal}`
   total.innerHTML=h5.outerHTML+p.outerHTML;
  }
 
 
  function applyCoupon(){
-   var coupons=getCoupons()
-  var btn= document.querySelector('#coupon-btn');
+
+   var input= document.getElementById('coupon-input');
+
+   var message=getMessages();
+   var btn= document.querySelector('#coupon-btn');
   btn.addEventListener('click',(e)=>{
     e.preventDefault();
-    var input= document.getElementById('coupon-input').value;
-    var coupon=coupons.find(coupon=>coupon.code == input);
-    var subTotal= document.getElementById('subtotal').lastChild;
-    subTotal= parseInt(subTotal.innerText.replace('$',''));
-    subTotal= subTotal - subTotal*coupon.value/100
-    console.log(subTotal)
+    var couponAmmount= getCouponValue();
+    if(!couponAmmount) {
+       messageHandler(message.COUPON_ERROR,'error')
+      return;
+  }
+  var subTotal=setCouponValue(couponAmmount)
+    var shippingValue= setShippingRate();
+    setGrandTotal(subTotal,shippingValue)
+    input.setAttribute('disabled',true);
+    btn.setAttribute('disabled',true);
+    input.after(couponCloseButton());
+    messageHandler(message.COUPON_SUCCESS,'success')
    })
  }
 
+ function getCouponValue(){
+  var coupons=getCoupons();
+  var input= document.getElementById('coupon-input').value;
+  var coupon=coupons.find(coupon=>coupon.code == input);
+  if(!coupon) return 0;
+  var subTotal= document.getElementById('subtotal').lastChild;
+  subTotal= parseInt(subTotal.innerText.replace('$',''));
+  var discountValue=subTotal*coupon.value/100;
+  return discountValue;
+ }
 
- 
+ function couponCloseButton(){
+ var button=  document.createElement('button')
+ var i=  document.createElement('i')
+ button.id="btn-coupon-remove";
+ button.className="btn-coupon-close btn btn-md mt-4";
+ i.className="fa fa-times text-danger";
+ button.setAttribute('onclick',"removeCoupon()");
+ button.append(i);
+ return button;
+ }
+
+
+ function removeCoupon(){
+  var couponForm= document.getElementById('coupon-form');
+  var couponContainer= document.getElementById('coupon');
+  var closeBtn= document.getElementById('btn-coupon-remove');
+  var btn= document.getElementById('coupon-btn');
+  var input= document.getElementById('coupon-input');
+  var message=getMessages();
+  var couponAmmount= getCouponValue();
+  var subTotal=setCouponValue(couponAmmount)
+  subTotal += couponAmmount;
+  setShippingLocation()
+  var shippingValue= setShippingRate();
+  setGrandTotal(subTotal,shippingValue);
+  btn.removeAttribute('disabled')
+  input.removeAttribute('disabled')
+  input.setAttribute('value','')
+  messageHandler(message.COUPON_REMOVED,'success');
+  closeBtn.parentNode.removeChild(closeBtn);
+  couponContainer.innerHTML="";
+  couponForm.reset()
+ }
+
+ function setCouponValue(couponAmmount){
+  var couponContainer= document.getElementById('coupon');
+  var h5=document.createElement('h5');
+  var p=document.createElement('p');
+  var subTotal= document.getElementById('subtotal').lastChild;
+  subTotal= parseInt(subTotal.innerText.replace('$',''));
+  subTotal= subTotal -couponAmmount;
+  h5.className="mb-0 me-4";
+  h5.innerText="Coupon:";
+  p.innerText="-"+couponAmmount+"$";
+  couponContainer.innerHTML=h5.outerHTML+p.outerHTML;
+  return subTotal;
+ }
+

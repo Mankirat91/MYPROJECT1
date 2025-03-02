@@ -92,10 +92,15 @@
       productCartAction.className="btn border border-secondary rounded-pill px-3 text-primary cart-btn"
       productCartIcon.className="fa fa-shopping-bag me-2 text-primary";
       productCartAction.setAttribute('product-id',`${product.id}`);
-      // productCartAction.setAttribute('onclick',routeWithParam(`/shop-detail?id=${product.id}`));
-      
-      productCartIcon.innerText="Add to cart"
-  
+
+        var check= checkCartItem(product.id)
+        if(check) {
+          productCartAction.innerText="Go to cart"
+        }
+        else{
+          productCartIcon.innerText="Add to Cart"
+          productCartAction.append(productCartIcon);
+        }
       productCartContainer.className="d-flex justify-content-between flex-lg-wrap";
       
       var img=getFeatureProductImage(product);
@@ -103,7 +108,7 @@
       var desc= getFeatureProductShortDescription(product);
       var price= getFeatureProductPrice(product);
       
-      productCartAction.append(productCartIcon);
+  
       productPriceContainer.append(price);
       productNameContainer.append(name);
       productNameContainer.append(desc);
@@ -168,6 +173,7 @@
     productImg.className= 'product-thumb-img';
     var containerProductImg =document.createElement('img');
     containerProductImg.className ="img-fluid w-100 rounded-top";
+    containerProductImg.style="height:200px"
     containerProductImg.src =product.thumbnailImage;
     anchorImg.append(containerProductImg);
     productImg.append(anchorImg);

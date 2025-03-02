@@ -498,3 +498,21 @@
 .fruite .fruite-categorie .fruite-name a.active{
 color: #ffb524 ;
 }
+
+#error {
+    color: red;
+}
+#success {
+    color: green;
+}
+div#coupon-action {
+    position: relative;
+}
+button.btn-coupon-close.btn.btn-md.mt-4 {
+    position: absolute;
+    bottom: 200px;
+    left: 140px;
+    TOP: -14PX;
+    BOTTOM: 0;
+    height: 30px;
+}
