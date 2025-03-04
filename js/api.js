@@ -118,6 +118,11 @@ function getProductById(productid){
   var products= getProductsData();
   return products.find(product=>product.id == productid)
 }
+
+function getCategoryById(catid){
+  var categories= getCategoriesData();
+  return categories.find(category=>category.id == catid)
+}
  
 
 function getShipping(){

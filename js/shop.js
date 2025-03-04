@@ -1,6 +1,6 @@
 
 
-var filter =[{name:"price",value:500,type:"order"},{ name:"sort",value:"asc",type:"price"},{ name:"cat",value:null,type:"find"}];
+var filter =[{name:"price",value:500,type:"order"},{ name:"sort",value:"asc",type:"price"},{ name:"cat",value:null,type:"find"},{ name:"search",value:null,type:"search"} ];
 var products =[];
 
 function getListProducts(){
@@ -121,4 +121,14 @@ function getListProducts(){
       })
     })
 
+  }
+
+
+  function searchQuery(){
+    var searchFrom= document.querySelector('#search-form');
+    searchFrom.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      var search= document.getElementById("search").value;
+      routeTo(`/shop?q=${search}`)
+    })
   }
