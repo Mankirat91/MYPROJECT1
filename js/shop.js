@@ -128,7 +128,19 @@ function getListProducts(){
     var searchFrom= document.querySelector('#search-form');
     searchFrom.addEventListener('submit',(e)=>{
       e.preventDefault();
+      
       var search= document.getElementById("search").value;
       routeTo(`/shop?q=${search}`)
+      if (search!=""){console.log("before",filter)
+        for(var i = 0; i < filter.length; i++){
+          if (filter[i].name=="search"){
+              filter[i].value=search ;
+              console.log("up",filter[i])
+            }}
+            console.log('after',filter);
+            products= getProductsDataByFilter(filter);
+            console.log(products);
+            getListProducts();
+           }
     })
   }

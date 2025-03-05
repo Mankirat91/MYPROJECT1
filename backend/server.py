@@ -20,3 +20,18 @@ b = 69
 #     print(i['name'])
 
 
+#functions
+
+def getProducts():
+    c = [{ "id":1,"name":"Brinjal" ,"qty":5,"desc":"ge","price":8},{"id":2, "name":"Brinjal" ,"qty":5,"desc":"ge","price":8}]
+    return c
+
+def getProductById(id):
+    products = getProducts()
+    for i in products:
+        if i['id'] == id:
+            return i
+        # else:
+        #     print("No Product")
+
+#numpy panda opencv tessract
