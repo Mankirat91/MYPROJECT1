@@ -80,7 +80,6 @@ function getProductsDataByFilter(filter){
   var priceItem=filter.find(fil=>fil.name=="price");
   var sortItem=filter.find(fil=>fil.name=="sort");
   var catItem=filter.find(fil=>fil.name=="cat");
-  var searchItem = filter.find(fil => fil.name == "search");
   if(priceItem){
     data= data.filter(dat=>dat.price < priceItem.value);
   }
@@ -93,9 +92,6 @@ function getProductsDataByFilter(filter){
   if(catItem && catItem.type =='find' && catItem.value){
     data=getSortDataByCategory(catItem.value,data)
   }
-  if (searchItem && searchItem.value) {
-    data = getSearchProduct(searchItem.value, data);
-  }
   return data;
 }
 function getSortDataAsc(param,data){
@@ -107,9 +103,6 @@ function getSortDataDec(param,data){
 }
 function getSortDataByCategory(param,data){
   return data.filter(product=>product.categoryId == param)
-}
-function getSearchProduct(param, data) {
-  return data.filter(product => product.name.toLowerCase().includes(param.toLowerCase()))
 }
 function getProductsCountByCategory(catid){
   var data= getProductsDataByCategory(catid);
