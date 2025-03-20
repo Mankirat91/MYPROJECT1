@@ -1,0 +1,10 @@
+{
+    "COUPON_ERROR":"Invalid Coupon",
+    "COUPON_SUCCESS":"Coupon Applied",
+    "COUPON_REMOVED":"Coupon Removed",
+    "EMAIL_INCORRECT":"Email not exists",
+    "USER_LOGGED_SUCCESSFULLY":"User loggedIn Successfully",
+    "PASSWORD_INCORRECT":"Invalid Password",
+    "PRODCUT_ADDED_SUCCESSFULLY":"Product added Successfully",
+    "UNAUTHORIZED":"You are not authorized to this request"
+}

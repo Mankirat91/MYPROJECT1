@@ -1,5 +1,6 @@
 import pymysql.cursors
-#from helper import encrypt,decrypt
+
+from helper import encrypt,decrypt
 
 def getConnection(host,user,password,database):
     try:
@@ -38,3 +39,4 @@ def dbQuery(query):
             # sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
              cursor.execute(query)
              result = cursor.fetchone()
+             
