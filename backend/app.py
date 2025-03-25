@@ -1,38 +1,46 @@
-from flask import Flask ,request ,jsonify
+from flask import Flask ,request ,json
 from werkzeug.exceptions import Conflict, BadRequest
-from controller.user import getUser
 import os
-from dotenv import load_dotenv
+from helper import getMessage,sendResponseByStatus,handle_bad_request
+from controller.user import userLogin
+from controller.product import addProduct
+from model.user import userSchema
+from db import getConnection
+from migration import userMigation
 
 app=Flask(__name__)
+connect=getConnection(os.getenv('DB_HOST'),os.getenv('DB_USER'),os.getenv('DB_PASSWORD'),os.getenv('DB_NAME'))
+userMigation(connect)
 
 def createServer():
     print("Server")
     
-@app.route('/home', methods=['POST','GET'])
-def homeRoute():
+@app.route('/auth/login', methods=['POST'])
+
+
+def auth_login():
     try:
         if request.method == "POST":
-            json = request.get_json()
-            if not json:
-                raise Exception("Invalid JSON INPUT") 
-            return getUser(json)
-        if request.method == "GET":
-            return "Hi"
+            data =json.loads(request.data)
+            result = userSchema.load(data)
+            return userLogin(result,connect)
     except Exception as e:
         return handle_bad_request(e)
 
-@app.errorhandler(BadRequest)
-def handle_bad_request(e):
-    data =jsonify({"message":e.args[0]})
-    return data , 400
+@app.route('/product/add', methods=['POST'])
 
-app.register_error_handler(400, handle_bad_request)
+def add_product():
+    try:
+
+        if request.method == "POST":
+            json = request.get_json()
+            header=dict(request.headers)
+            if 'Authorization' not in header:
+               return sendResponseByStatus(getMessage('UNAUTHORIZED'),401)
+            return addProduct(header['Authorization'],json['name'],json['qty'])
+    except Exception as e:
+        return handle_bad_request(e)
 
 
-#rep converts object to array
-#MVC  middleware(authentication handling , token management , roles handling)
-#Cookies Session Local Storage + Device Attributes(Device number , mac address , model number) 
-#Device Cache Management(Queue techinque data striucture) , sockets(Chat)
-#API ->Server ->Route ->(middlware validation)-> Controller ->Model
-#Routing used to interact with server through a web link
+
+

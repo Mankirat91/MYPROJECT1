@@ -1,11 +1,11 @@
 from helper import getMessage,sendResponse,handle_bad_request
 from flask import Flask ,request ,jsonify
-from middleware.middleware import isUserLoggedIn
+from middleware.middleware import validateUserToken
 import os
 
-def addProduct(name,qty):
+def addProduct(token,name,qty):
     try:
-        data= {"name":name,"qty":2}
-        return isUserLoggedIn([1,2],getMessage('PRODCUT_ADDED_SUCCESSFULLY'),data)
+        print(token)
+        return validateUserToken(token,{"name":name,"qty":qty},"product added")
     except Exception as e:
         return handle_bad_request(e)

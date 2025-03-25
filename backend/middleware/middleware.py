@@ -1,6 +1,6 @@
 from helper import sendResponse, handle_bad_request,sendResponseByStatus,getMessage
 from flask import Flask ,request ,jsonify
-from helper import set_cookie_value,get_cookie_value
+from helper import set_cookie_value,get_cookie_value,verifyToken
 
 def isUserLoggedIn(roles,data,message):
      try:
@@ -10,6 +10,17 @@ def isUserLoggedIn(roles,data,message):
         else:
            return sendResponseByStatus(getMessage('UNAUTHORIZED'),401)
      except Exception as e:
+        return handle_bad_request(e)
+
+def validateUserToken(token,message,data):
+    try:
+        obj= verifyToken(token)
+        print("obj")
+        print(obj)
+        if obj:
+            return sendResponse(message,data)
+        return sendResponseByStatus(getMessage('UNAUTHORIZED'),401)
+    except Exception as e:
         return handle_bad_request(e)
 
 def checkRole(roles,message,data):

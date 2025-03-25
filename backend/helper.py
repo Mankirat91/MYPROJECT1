@@ -2,7 +2,9 @@ import base64
 from flask import Response ,jsonify,json,make_response
 from werkzeug.exceptions import Conflict, BadRequest
 from Crypto.Cipher import AES
+from datetime import datetime, timedelta
 from Crypto.Hash import SHA256
+import jwt
 import os
 
 PAD = "X"
@@ -18,6 +20,8 @@ def encrypt(text, key):
     return base64.b64encode(encrypted).decode()
 
 def decrypt(text, key):
+    print(text)
+    print(key)
     cipher = AES.new(key_hash(key))
     plain = cipher.decrypt(base64.b64decode(text))
     return plain.decode().rstrip(PAD)
@@ -51,6 +55,19 @@ def set_cookie_value(obj,status,name,value):
 def get_cookie_value(req,name):
     return req.cookies.get(name)
 
+def generateToken(string):
+    try:
+        token = jwt.encode({'public_id': string,'exp' : datetime.utcnow() + timedelta(minutes = 30)},os.getenv('TOKEN_SECRET_KEY'))
+        return token
+    except Exception as e:
+        return handle_bad_request(e)
+    
+def verifyToken(token):
+    try:
+        decoded = jwt.decode(token, options={"verify_signature": False})
+        return decoded
+    except Exception as e:
+        return False
 
 
 

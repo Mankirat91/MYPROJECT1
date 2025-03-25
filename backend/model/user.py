@@ -1,20 +1,18 @@
 from db import dbQuery
 import os
-from server import connectDb
+from marshmallow import Schema, fields
 from helper import encrypt,decrypt
 
-class User:
-    def __init__(self,email,password):
-        db=connectDb()
-        self.db=db
-        qry = 'CREATE TABLE Users ( id int PRIMARY, email varchar(255), password varchar(2000) )'
-        dbQuery(qry,self.db)   
-        print("User table created succesfully")
-    
-    def createSuperUser(self):
-        qry = 'INSERT INTO USERS SET email = {self.email} , password = {encrypt(self.password,os.getenv("CRYPTO_KEY"))}'
-        dbQuery(qry,self.db)
-    
+class UserSchema(Schema):
+      email = fields.Email(required=True,error_messages={"required": "Email is required"})
+      password = fields.String(required=True)
 
-user=User(os.getenv('EMAIL'),os.getenv('PASSWORD'))
-user.createSuperUser()
+
+class UserModel():
+      def __init__(self,email,password,first_name,last_name):
+         self.first_name=first_name
+         self.email=email
+         self.password=password
+         self.last_name=last_name
+
+userSchema=UserSchema()

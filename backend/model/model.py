@@ -1,4 +1,6 @@
 from model.user import createSuperUser
+
+
 class Model:
     def __init__(self):
        self
