@@ -7,17 +7,24 @@ from Crypto.Hash import SHA256
 import jwt
 import os
 
+
 PAD = "X"
 
 def key_hash(key):
     return SHA256.new(key.encode()).digest()
 
 def encrypt(text, key):
-    while len(text) % 32 != 0:
-        text += PAD
-    cipher = AES.new(key_hash(key))
-    encrypted = cipher.encrypt(text.encode())
-    return base64.b64encode(encrypted).decode()
+
+    try:
+        while len(text) % 32 != 0:
+            text += PAD
+        cipher = AES.new(key_hash(key),AES.MODE_CBC)
+        encrypted = cipher.encrypt(text.encode())
+        
+        return base64.b64encode(encrypted).decode()
+    except Exception as e:
+        print(e)
+        return handle_bad_request(e)
 
 def decrypt(text, key):
     print(text)

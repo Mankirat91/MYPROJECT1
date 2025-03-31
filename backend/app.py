@@ -8,9 +8,12 @@ from model.user import userSchema
 from db import getConnection
 from migration import userMigation
 
+
 app=Flask(__name__)
-connect=getConnection(os.getenv('DB_HOST'),os.getenv('DB_USER'),os.getenv('DB_PASSWORD'),os.getenv('DB_NAME'))
-userMigation(connect)
+
+with app.app_context():
+    connect=getConnection(os.getenv('DB_HOST'),os.getenv('DB_USER'),os.getenv('DB_PASSWORD'),os.getenv('DB_NAME'))
+    userMigation(connect)
 
 def createServer():
     print("Server")
