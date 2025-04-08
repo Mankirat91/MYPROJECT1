@@ -3,7 +3,13 @@
     "COUPON_SUCCESS":"Coupon Applied",
     "COUPON_REMOVED":"Coupon Removed",
     "EMAIL_INCORRECT":"Email not exists",
+    "EMAIL_ALREADY_EXISTS":"Email already exists",
+    "EMAIL_DON'T_EXISTS":"Email does not exists",
+    "USER_NOT_FOUND":"User not exists",
+    "USER_ADDED_SUCCESSFULLY":"User added Successfully",
     "USER_LOGGED_SUCCESSFULLY":"User loggedIn Successfully",
+    "USER_UDATED":"User updated Successfully",
+    "USER_DELETED":"User deleted Successfully",
     "PASSWORD_INCORRECT":"Invalid Password",
     "PRODCUT_ADDED_SUCCESSFULLY":"Product added Successfully",
     "UNAUTHORIZED":"You are not authorized to this request"

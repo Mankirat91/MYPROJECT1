@@ -1,35 +1,41 @@
-def getAllQuery(connect,query):
+def getAllQueryWithCondition(cursor,query,values):
     try:
-        with connect:
-             with connect.cursor() as cursor:
-                 cursor.execute(query)
-                 result = cursor.fetchall()
-                 return result
+        cursor.execute(query,values)
+        result = cursor.fetchall()
+        return result
+    except Exception as e:
+        print(e)
+
+def getAllQuery(cursor,query):
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
     except Exception as e:
         print(e)
 
 
-def getOneQuery(connect,query):
+def getOneQuery(cursor,query,values):
     try:
-        with connect:
-             with connect.cursor() as cursor:
-                 cursor.execute(query)
-                 result = cursor.fetchone()
-                 print()
-                 return result
+        cursor.execute(query,values)
+        result=cursor.fetchone()
+        return result
     except Exception as e:
         print(e)
 
-    
 
-
-def executeQuery(connect,query):
+def insertQuery(mysql,cursor,query,values):
     try:
-        with connect:
-             with connect.cursor() as cursor:
-                 cursor.execute(query)
-                 result = cursor.commit()
-                 return result
+        cursor.execute(query,values)
+        result= mysql.connect().commit()
+        return result
     except Exception as e:
         print(e)
 
+def execQuery(mysql,cursor,query):
+    try:
+        cursor.execute(query)
+        result= mysql.connect().commit()
+        return result
+    except Exception as e:
+        print(e)
