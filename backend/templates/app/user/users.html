@@ -1,0 +1,108 @@
+
+{% include "includes/head.html" %}
+  
+{% include "includes/sidebar.html" %}  
+    <!-- /#header -->
+    <!-- Content -->
+    <!-- ======== main-wrapper start =========== -->
+    <main class="main-wrapper">
+        <!-- ========== header start ========== -->
+
+        <!-- ========== header end ========== -->
+        {% include "includes/header.html" %}  
+        <!-- ========== section start ========== -->
+<section class="table-components">
+    <div class="container-fluid">
+        
+      <!-- ========== title-wrapper start ========== -->
+      <div class="title d-flex flex-wrap align-items-center justify-content-between mt-20 mb-20">
+        <div class="left d-flex align-items-center justify-content-center ">
+          <h6 class="text-medium">Users</h6>
+
+        </div>
+        <div class="right d-flex align-items-center justify-content-center">
+          <div class="select-style-1 mr-10 mb-0">
+            <div  class="select-position select-sm">
+              <select id="limit" name="limit" class="light-bg">
+                <option value="10">Limit 10</option>
+                <option value="20">Limit 20</option>
+              </select>
+            </div>
+          </div>
+            <div class="select-position select-sm">
+                <a href="/app/user/add" class="main-btn primary-btn rounded-full btn-hover">Add User</a>
+            </div>
+          <!-- end select -->
+        </div>
+      </div>
+      <!-- ========== title-wrapper end ========== -->
+
+      <!-- ========== tables-wrapper start ========== -->
+      <div class="tables-wrapper">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card-style mb-30">
+              <h6 class="mb-10">Users</h6>
+              <div class="table-wrapper table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>First Name{{result.total}}</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Active</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                  <tbody>
+                    {% for dat in result.data %}
+                    <tr>
+                      <td>{{dat.first_name}}</td>
+                      <td>{{dat.last_name}}</td>
+                      <td>{{dat.email}}</td>
+                      <td>{% if dat.role == 2 %} <span class="status-btn success-btn">Sub Admin</span> {% else %} Manager {% endif %} </td>
+                      <td>                            
+                        <div class="form-check form-switch toggle-switch">
+                        <input class="form-check-input" type="checkbox" id="toggleSwitch2" checked="">
+                        <label class="form-check-label" for="toggleSwitch2"></label>
+                      </div></td>
+                      <td>
+                        <div class="action">
+                            <a class="edit" href='/app/user/edit/{{dat.id}}'>
+                                <i class="lni lni-pencil"></i>
+                            </a>
+                            <form action='/app/user/delete/{{dat.id}}' method="post">
+                            <button type="submit" class="text-danger">
+                              <i class="lni lni-trash-can"></i>
+                            </button>
+                        </form>    
+                          </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+                </table>
+                <!-- end table -->
+              </div>
+            </div>
+            <!-- end card -->
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- ========== tables-wrapper end ========== -->
+    </div>
+    <!-- end container -->
+  </section>
+    </main>
+    <script>
+      var limit=document.querySelector('#limit')
+      limit.addEventListener('change',()=>{
+        window.location.replace(window.location.origin+`/app/users?limit=${limit.value}`);
+      })
+    </script>
+<div class="clearfix"></div>
+{% include "includes/footer.html" %}

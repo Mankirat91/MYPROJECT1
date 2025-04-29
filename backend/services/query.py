@@ -32,9 +32,9 @@ def insertQuery(mysql,cursor,query,values):
     except Exception as e:
         print(e)
 
-def execQuery(mysql,cursor,query):
+def execQuery(mysql,cursor,query,values=None):
     try:
-        cursor.execute(query)
+        cursor.execute(query,values)
         result= mysql.connect().commit()
         return result
     except Exception as e:

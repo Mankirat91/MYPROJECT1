@@ -1,5 +1,5 @@
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields,validate
 
 class UserSchema(Schema):
       email = fields.Email(required=True,error_messages={"required": "Email is required"})
@@ -11,9 +11,14 @@ class UserSchemaAddUser(Schema):
       first_name = fields.String(required=True)
       last_name = fields.String(required=True)
 
-
 class UserSchemaUpdateUser(Schema):
-      userid = fields.String(required=True,error_messages={"required": "User id is required"})
+      email = fields.Email(required=False,error_messages={"required": "Email is required"})
+      first_name = fields.String(required=False)
+      last_name = fields.String(required=False)
+      password = fields.String(required=False)
+
+class UserSchemaDeleteUser(Schema):
+      user_id = fields.Number(required=True,error_messages={"required": "User id is required"})
 
 
 class UserModel():
@@ -27,3 +32,5 @@ class UserModel():
 
 userSchema=UserSchema()
 UserSchemaAddUser=UserSchemaAddUser()
+UserSchemaUpdateUser=UserSchemaUpdateUser()
+UserSchemaDeleteUser=UserSchemaDeleteUser()

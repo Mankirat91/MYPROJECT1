@@ -7,28 +7,19 @@ from Crypto.Hash import SHA256
 import jwt
 import os
 
-
 PAD = "X"
 
 def key_hash(key):
     return SHA256.new(key.encode()).digest()
 
 def encrypt(text, key):
-
-    try:
-        while len(text) % 32 != 0:
-            text += PAD
-        cipher = AES.new(key_hash(key),AES.MODE_CBC)
-        encrypted = cipher.encrypt(text.encode())
-        
-        return base64.b64encode(encrypted).decode()
-    except Exception as e:
-        print(e)
-        return handle_bad_request(e)
+    while len(text) % 32 != 0:
+        text += PAD
+    cipher = AES.new(key_hash(key))
+    encrypted = cipher.encrypt(text.encode())
+    return base64.b64encode(encrypted).decode()
 
 def decrypt(text, key):
-    print(text)
-    print(key)
     cipher = AES.new(key_hash(key))
     plain = cipher.decrypt(base64.b64decode(text))
     return plain.decode().rstrip(PAD)
@@ -53,6 +44,17 @@ def getMessage(message):
         return data[message]
     except Exception as e:
         return handle_bad_request(e)
+    
+
+def getJSONData(path):
+    try:
+        SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+        json_url = os.path.join(SITE_ROOT, "locales", path+".json")
+        data = json.load(open(json_url))
+        return data
+    except Exception as e:
+        return handle_bad_request(e)
+    
 
 def set_cookie_value(obj,status,name,value):
     res= make_response(obj, status)
