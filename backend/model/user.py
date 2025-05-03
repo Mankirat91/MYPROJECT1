@@ -30,7 +30,7 @@ class UserModel():
          self.role=role
          self.pubic_id=pubic_id
 
-userSchema=UserSchema()
+UserSchema=UserSchema()
 UserSchemaAddUser=UserSchemaAddUser()
 UserSchemaUpdateUser=UserSchemaUpdateUser()
 UserSchemaDeleteUser=UserSchemaDeleteUser()

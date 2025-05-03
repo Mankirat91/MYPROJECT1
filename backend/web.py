@@ -4,7 +4,7 @@ from helper import handle_bad_request
 from controller.web.user import userLogin,addUser,getUser,getUsersWithPagination,updateUser,deleteUser,getCurrentUser
 from controller.web.customer import addCustomer, getCustomers,updateCustomer
 
-from model.user import userSchema,UserSchemaAddUser,UserSchemaUpdateUser,UserSchemaDeleteUser
+from model.user import UserSchema,UserSchemaAddUser,UserSchemaUpdateUser,UserSchemaDeleteUser
 from model.customer import CustomerSchema,CustomerSchemaAddCustomer,CustomerSchemaUpdateCustomer,CustomerSchemaDeleteCustomer
 from middleware.middleware import require_authentication,check_role,require_session_authentication,require_session_non_authentication
 def UserWebRoutes(app,mysql,cursor):
@@ -22,7 +22,7 @@ def UserWebRoutes(app,mysql,cursor):
             try:
                 if request.method == "POST":
                     data =request.form
-                    result = userSchema.load(data)
+                    result = UserSchema.load(data)
                     return userLogin(cursor,result)
                 if request.method == "GET":
                     return render_template('/auth/login.html')

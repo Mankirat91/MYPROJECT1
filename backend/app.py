@@ -1,5 +1,6 @@
 from flask import Flask 
 from flaskext.mysql import MySQL
+
 from flask_cors import CORS
 import os
 import pymysql.cursors
