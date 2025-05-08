@@ -15,12 +15,12 @@ def key_hash(key):
 def encrypt(text, key):
     while len(text) % 32 != 0:
         text += PAD
-    cipher = AES.new(key_hash(key))
+    cipher = AES.new(key_hash(key),AES.MODE_CBC)
     encrypted = cipher.encrypt(text.encode())
     return base64.b64encode(encrypted).decode()
 
 def decrypt(text, key):
-    cipher = AES.new(key_hash(key))
+    cipher = AES.new(key_hash(key),AES.MODE_CBC)
     plain = cipher.decrypt(base64.b64decode(text))
     return plain.decode().rstrip(PAD)
 

@@ -1,12 +1,13 @@
 function login(email,password){
-   var emailExist=getUserByEmail(email)
-    var messages=getMessages();
-   if(!emailExist) return messageHandler(messages.EMAIL_INCORRECT,'error')
-   var passwordExist=getUserByPassword(password)
-   if(!passwordExist) return messageHandler(messages.PASSWORD_INCORRECT,'error')
-   setLocalData('userId',passwordExist.id);
-   document.cookie=`userId=${passwordExist.id};`;
-   routeTo('/');
+   var data=customerLogin(email,password)
+   print(data)
+  //   var messages=getMessages();
+  //  if(!emailExist) return messageHandler(messages.EMAIL_INCORRECT,'error')
+  //  var passwordExist=getUserByPassword(password)
+  //  if(!passwordExist) return messageHandler(messages.PASSWORD_INCORRECT,'error')
+  //  setLocalData('userId',passwordExist.id);
+  //  document.cookie=`userId=${passwordExist.id};`;
+  //  routeTo('/');
 }
 
 function submitForm(){

@@ -1,3 +1,4 @@
+// promises are set of operations to be completed in javascript
 function getGeolcation(){
   var obj=urlRequest('http://ip-api.com/json')
   var data= JSON.parse(obj);
@@ -13,6 +14,12 @@ function getUserByEmail(email){
   var data=getUsers()
   var email= data.find(dat=>dat.email == email)
   return email;
+}
+
+async function customerLogin(email,password){
+  var response=await createRequest('http://127.0.0.1:5000/customer/login','POST',{ email,password})
+  console.log(response)
+  return response;
 }
 
 function getUserByPassword(password){
@@ -46,7 +53,22 @@ function urlRequest(path){
     req.open('GET',path,false);
     req.send(null);
     return req.responseText;
+}
+
+
+async function createRequest(url,method,data){
+  try{
+    var response =await fetch(url, {method:method,body:JSON.stringify(data) })
+    if(response.status != 200){
+      console.log(response)
+      throw new Error(response.message || "Error found")
+    }
+    return response;
   }
+  catch(error){
+    alert(error.message)
+  }
+}
 
   function getTemplateData(){
     var obj=urlRequest('/data/templates.json')

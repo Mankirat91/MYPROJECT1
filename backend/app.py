@@ -1,5 +1,6 @@
 from flask import Flask 
 from flaskext.mysql import MySQL
+from migration import userMigation,countryMigation,customerMigration,categoryMigration,productMigration,reviewMigration
 
 from flask_cors import CORS
 import os
@@ -14,9 +15,15 @@ mysql = MySQL(app,host=os.getenv('DB_HOST'),user=os.getenv('DB_USER'),password=o
 mysql.init_app(app)
 with app.test_request_context():
     cursor =mysql.get_db().cursor()
-UserWebRoutes(app,mysql,cursor)
-CustomerWebRoutes(app,mysql,cursor)
-ApiRoutes(app,mysql,cursor)
+    # userMigation(mysql,cursor)
+    # countryMigation(mysql,cursor)
+    # customerMigration(mysql,cursor)
+    # categoryMigration(mysql,cursor)
+    # productMigration(mysql,cursor)
+    # reviewMigration(mysql,cursor)
+    UserWebRoutes(app,mysql,cursor)
+    CustomerWebRoutes(app,mysql,cursor)
+    ApiRoutes(app,mysql,cursor)
 
 
 
