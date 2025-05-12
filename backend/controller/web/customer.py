@@ -54,3 +54,21 @@ def updateCustomer(mysql,cursor,data):
             return result
     except Exception as e:
         return handle_bad_request(e)
+    
+def getCustomersWithPagination(limit,page,cursor):
+    try:
+        if limit == None:
+           limit = 10
+        if page == None:
+           page = 1
+        offset=int(limit)*int(page)-int(limit)
+        total=getAllQueryWithCondition(cursor,'SELECT COUNT(*) from customers',())
+        data=getAllQueryWithCondition(cursor,'SELECT id,email,first_name,last_name,is_active from customers  LIMIT %s OFFSET %s',(int(limit),int(offset)))
+        if not data:
+            message=getMessage('CUSTOMER_NOT_FOUND')
+            return message
+        result = { "data":data,"page":page,"limit":limit,"total":total[0]['COUNT(*)'],"totalPages":offset}
+        return result
+    except Exception as e:
+        return handle_bad_request(e)
+    

@@ -16,11 +16,12 @@ class UserSchemaUpdateUser(Schema):
       first_name = fields.String(required=False)
       last_name = fields.String(required=False)
       password = fields.String(required=False)
+      is_active = fields.Boolean(required=False)
+
 
 class UserSchemaDeleteUser(Schema):
       user_id = fields.Number(required=True,error_messages={"required": "User id is required"})
-
-
+      
 class UserModel():
       def __init__(self,email,password,first_name,role,pubic_id,last_name):
          self.first_name=first_name
@@ -30,7 +31,7 @@ class UserModel():
          self.role=role
          self.pubic_id=pubic_id
 
-UserSchema=UserSchema()
+userSchema=UserSchema()
 UserSchemaAddUser=UserSchemaAddUser()
 UserSchemaUpdateUser=UserSchemaUpdateUser()
 UserSchemaDeleteUser=UserSchemaDeleteUser()

@@ -1,42 +1,62 @@
-from helper import getMessage,sendResponse,handle_bad_request,set_cookie_value,decrypt,generateToken
-from flask import render_template,session,redirect,flash
+from helper import getMessage,handle_bad_request
+from flask import render_template,redirect,flash
 import os
-import uuid
-from helper import encrypt
+from middleware.middleware import allowed_file
+from helper import encrypt,get_time_stamp,get_extension
 from services.query import getOneQuery,insertQuery ,getAllQueryWithCondition,execQuery
 
-
-def addCategory(mysql,cursor,data,category,page,action,method):
+def addCategory(mysql,cursor,data,files, user,page,action,method):
     try:
+        if 'image' not in files:
+            flash(getMessage('CATEGORY_IMAGE_NOT_FOUND'))
+        file = files['image']
+        if file.filename == '':
+            flash(getMessage('CATEGORY_IMAGE_NOT_FOUND'))
+        if file and allowed_file(file.filename):
+            ext=get_extension(file.filename)
+            filename=get_time_stamp()
+            current_dir = os.getcwd()
+            file.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_CATEGORY') ,str(filename)+'.'+ext))
         result=getOneQuery(cursor,'SELECT name from categories WHERE name=%s',(data['name']))
         if not result:
+             name=data['name']
              qry='INSERT into  categories  (name,link,image) VALUES (%s,%s,%s)'
-             values=(data['name'],data['link'],data['image'])
+             values=(name,name.replace(" ", "-").lower(),str(filename)+'.'+ext)
              insertQuery(mysql,cursor,qry,values)
-             result=getOneQuery(cursor,'SELECT name from categories WHERE name=%s',(data['name']))
+             result=getOneQuery(cursor,'SELECT name from categories WHERE email=%s',(data['name']))
              flash(getMessage('CATEGORY_ADDED_SUCCESSFULLY') )
              return redirect('/app/categories')
-        return render_template('/app/category/add_category.html',message=getMessage('CATEGORY_ALREADY_EXISTS') , success=False,category=category,data='',page=page,action=action,method=method)
+        return render_template('/app/category/add_category.html',message=getMessage('CATEGORY_ALREADY_EXISTS') , success=False,user=user,data='',page=page,action=action,method=method)
     except Exception as e:
-        return handle_bad_request(e)
+         print(e)
+         return render_template('/app/category/add_category.html',message=e.args[0], success=False,user=user,data='',page=page,action=action,method=method)
     
 
-def updateCategory(mysql,cursor,data,category_id):
+def updateCategory(mysql,cursor,data,files,category_id):
     try:
-        print(data)
-        if "email" in data:
+
+        if "name" in data:
             result=getOneQuery(cursor,'SELECT name from categories WHERE name=%s AND id != %s',(data['name'],category_id))
             if  result:
-                return render_template('/app/category/add_category.html',message=getMessage('EMAIL_ALREADY_EXISTS') , success=False )
+                return render_template('/app/category/add_category.html',message=getMessage('CATEGORY_ALREADY_EXISTS') , success=False )
+        if 'image' in files:
+           file = files['image']
+        if file and allowed_file(file.filename):
+            resu=getOneQuery(cursor,'SELECT image from categories WHERE id=%s',(category_id))
+            ext=get_extension(file.filename)
+            filename=get_time_stamp()
+            current_dir = os.getcwd()
+            file.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_CATEGORY') ,str(filename)+'.'+ext))
+            os.remove(current_dir + os.getenv('UPLOAD_FOLDER_CATEGORY') +'/'+resu['image'])
+            data['image']=str(filename)+'.'+ext
         fields=''
         for k, v in data.items():
-            if k == 'password':
-                v = encrypt(v,os.getenv('CRYPTO_KEY'))
             fields += k + '="'+v+'",'
         result=execQuery(mysql,cursor,'UPDATE  categories  SET '+fields.rstrip(',')+' WHERE id=%s',(category_id))
         flash(getMessage('CATEGORY_UPDATED_SUCCESSFULLY') )
         return redirect('/app/categories')
     except Exception as e:
+        print(e)
         return handle_bad_request(e)
     
 
@@ -57,7 +77,7 @@ def deleteCategory(mysql,cursor,data):
     try:
         exist=getOneQuery(cursor,'SELECT name from categories WHERE id=%s',(data['category_id']))
         if exist:
-             exist=execQuery(mysql,cursor,'DELETE from categories WHERE id=%s',(data['category_id']))
+             result=execQuery(mysql,cursor,'DELETE from categories WHERE id=%s',(data['category_id']))
              flash(getMessage('CATEGORY_DELETED_SUCCESSFULLY') )
              return redirect('/app/categories')
         raise Exception(getMessage('CATEGORY_NOT_FOUND'))
@@ -67,7 +87,7 @@ def deleteCategory(mysql,cursor,data):
 
 def getCategory(cursor,categoryid):
     try:
-        result=getOneQuery(cursor,'SELECT id,name,image,link from categories WHERE id=%s',(categoryid))
+        result=getOneQuery(cursor,'SELECT id,name,image from categories WHERE id=%s',(categoryid))
         if not result:
             raise Exception(getMessage('CATEGORY_NOT_FOUND'))
         return result
@@ -82,11 +102,10 @@ def getCategorysWithPagination(limit,page,cursor):
         if page == None:
            page = 1
         offset=int(limit)*int(page)-int(limit)
-        print(offset)
-        total=getAllQueryWithCondition(cursor,'SELECT COUNT(*) from categories',(""))
-        print(total)
+        total=getAllQueryWithCondition(cursor,'SELECT COUNT(*) from categories',())
         data=getAllQueryWithCondition(cursor,'SELECT id,name,link,image , is_active from categories  LIMIT %s OFFSET %s',(int(limit),int(offset)))
         print(data)
+        print(total)
         if not data:
             message=getMessage('CATEGORY_NOT_FOUND')
             return message
@@ -95,10 +114,7 @@ def getCategorysWithPagination(limit,page,cursor):
     except Exception as e:
         return handle_bad_request(e)
     
-def getCurrentCategory(cursor):
-    public_id=session.get("public_id")
-    user=getOneQuery(cursor,'SELECT * from categories WHERE pubic_id=%s',(public_id))
-    return user
+
     
 
     

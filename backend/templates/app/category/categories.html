@@ -51,9 +51,9 @@
                 <table class="table">
                   <thead>
                     <tr>
+                      <th>#</th>
                       <th>Name</th>
                       <th>Link</th>
-                      <th>Image</th>
                       <th>Active</th>
                       <th>Action</th>
                     </tr>
@@ -66,9 +66,9 @@
                     {% else %}
                     {% for dat in result.data %}
                     <tr>
+                      <td><img class="thumb-img" src="{{ url_for('static', filename='uploads/category/'+dat.image) }}"/></td>
                       <td>{{dat.name}}</td>
                       <td>{{dat.link}}</td>
-                      <td>{{dat.image}}</td>
                       <td>
                         <div class="form-check form-switch toggle-switch">
                           <input
@@ -186,7 +186,7 @@
      window.event.preventDefault()
      if(check){
         var data_id = re.getAttribute("data-id");
-        await deleteUser(data_id);
+        await deleteCategory(data_id);
      }
   });
   })
@@ -205,18 +205,18 @@
         window.location.origin + `/app/category/active/` + data_id,
         { method: "PUT", body: JSON.stringify({ is_active }) }
       );
-      window.location.replace(window.location.origin + `/app/categorys`);
+      window.location.replace(window.location.origin + `/app/categories`);
     } catch (e) {
     }
   }
 
-  async function deleteUser(data_id) {
+  async function deleteCategory(data_id) {
     try {
       var data = await fetch(
         window.location.origin + `/app/category/delete/` + data_id,
         { method: "DELETE", body: ""}
       );
-      window.location.replace(window.location.origin + `/app/categorys`);
+      window.location.replace(window.location.origin + `/app/categories`);
     } catch (e) {
     }
   }

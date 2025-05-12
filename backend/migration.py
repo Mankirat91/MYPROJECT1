@@ -5,20 +5,20 @@ from helper import encrypt,getJSONData
 
 def userMigation(mysql,cursor):
     try:
-        # table='CREATE TABLE users ( id int PRIMARY KEY AUTO_INCREMENT ,pubic_id varchar(255),  first_name varchar(255), last_name varchar(255),  email varchar(255),  password varchar(255) , role int, is_active int DEFAULT 1)'
+        # table='CREATE TABLE users ( id int PRIMARY KEY AUTO_INCREMENT ,pubic_id varchar(255),  first_name varchar(255), last_name varchar(255),  email varchar(255),  password varchar(255) , role int)'
         # execQuery(mysql,cursor,table)
-        sql_check="SELECT email from  users WHERE email = %s"
-        values=(os.getenv('EMAIL'))
-        data=getOneQuery(cursor,sql_check,values)
-        print(data)
-        if  data == None:
-             sql2='INSERT into  users  (pubic_id,first_name,last_name,email,password,role) VALUES (%s,%s,%s,%s,%s,%s)'
-             values=(os.getenv('UUID'),os.getenv('FIRST_NAME'),os.getenv('LAST_NAME'),os.getenv('EMAIL'), encrypt(os.getenv('PASSWORD'),os.getenv('CRYPTO_KEY')), os.getenv('ROLE'))
-             print(sql2)
-             insertQuery(mysql,cursor,sql2,values)
-             print("User migration done successfully") 
-        else:
-           print("User migration already done") 
+        table='ALTER TABLE users ADD is_active int DEFAULT 1'
+        execQuery(mysql,cursor,table)
+        # sql_check="SELECT email from  users WHERE email = %s"
+        # values=(os.getenv('EMAIL'))
+        # data=getOneQuery(cursor,sql_check,values)
+        # if  data == None:
+        #      sql2='INSERT into  users  (pubic_id,first_name,last_name,email,password,role) VALUES (%s,%s,%s,%s,%s,%s)'
+        #      values=(os.getenv('UUID'),os.getenv('FIRST_NAME'),os.getenv('LAST_NAME'),os.getenv('EMAIL'), encrypt(os.getenv('PASSWORD'),os.getenv('CRYPTO_KEY')), os.getenv('ROLE'))
+        #      insertQuery(mysql,cursor,sql2,values)
+        #      print("User migration done successfully") 
+        # else:
+        print("User migration already done") 
     except Exception as e:
         print(e)
         return handle_bad_request(e)
@@ -27,8 +27,8 @@ def userMigation(mysql,cursor):
 def countryMigation(mysql,cursor):
     try:
         countries= getJSONData('countries')
-        table='CREATE TABLE countries ( id int PRIMARY KEY AUTO_INCREMENT , name varchar(255), code varchar(255),  is_active int DEFAULT 1 )'
-        execQuery(mysql,cursor,table)
+#        table='CREATE TABLE countries ( id int PRIMARY KEY AUTO_INCREMENT , name varchar(255), code varchar(255),  is_active int DEFAULT 1 )'
+ #       execQuery(mysql,cursor,table)
         sql_check="SELECT * from  countries WHERE code = %s"
         values=("IND")
         data=getOneQuery(cursor,sql_check,values)

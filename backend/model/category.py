@@ -1,26 +1,24 @@
 
 from marshmallow import Schema, fields
 
-class categorySchemaAddcategory(Schema):
+class CategorySchemaAddcategory(Schema):
       name = fields.String(required=True)
-      link = fields.String(required=True)
-      image = fields.String(required=True)
+      image = fields.Raw(type='file')
 
-class categorySchemaUpdatecategory(Schema):
+class CategorySchemaUpdatecategory(Schema):
       name = fields.String(required=False)
       image = fields.String(required=False)
       is_active = fields.Boolean(required=False)
-
-
-class categorySchemaDeletecategory(Schema):
+      
+class CategorySchemaDeletecategory(Schema):
       category_id = fields.Number(required=True,error_messages={"required": "category id is required"})
       
-class categoryModel():
+class CategoryModel():
       def __init__(self,name,link,image):
          self.name=name
          self.link=link
          self.image=image
 
-categorySchemaAddcategory=categorySchemaAddcategory()
-categorySchemaUpdatecategory=categorySchemaUpdatecategory()
-categorySchemaDeletecategory=categorySchemaDeletecategory()
+CategorySchemaAddcategory=CategorySchemaAddcategory()
+CategorySchemaUpdatecategory=CategorySchemaUpdatecategory()
+CategorySchemaDeletecategory=CategorySchemaDeletecategory()

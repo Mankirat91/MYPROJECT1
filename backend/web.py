@@ -2,13 +2,13 @@ from flask import Flask ,request ,json, render_template,session,redirect
 import os
 from helper import handle_bad_request
 from controller.web.user import userLogin,addUser,getUser,getUsersWithPagination,updateUser,deleteUser,getCurrentUser,activeDeativeUser
-from controller.web.customer import addCustomer, getCustomers,updateCustomer
+from controller.web.customer import addCustomer, getCustomersWithPagination,updateCustomer
 
-from controller.web.category import getCategorysWithPagination,addCategory,updateCategory,activeDeativeCategory,deleteCategory,getCategory,getCurrentCategory
+from controller.web.category import getCategorysWithPagination,addCategory,deleteCategory,updateCategory,activeDeativeCategory,getCategory
 
-from model.user import UserSchema,UserSchemaAddUser,UserSchemaUpdateUser,UserSchemaDeleteUser
-from model.customer import CustomerSchema,CustomerSchemaAddCustomer,CustomerSchemaUpdateCustomer,CustomerSchemaDeleteCustomer
-from model.category import categorySchemaAddcategory,categorySchemaUpdatecategory,categorySchemaDeletecategory
+from model.user import userSchema,UserSchemaAddUser,UserSchemaUpdateUser,UserSchemaDeleteUser
+from model.customer import CustomerSchemaAddCustomer,CustomerSchemaUpdateCustomer
+from model.category import CategorySchemaAddcategory,CategorySchemaDeletecategory,CategorySchemaUpdatecategory
 
 from middleware.middleware import require_authentication,check_role,require_session_authentication,require_session_non_authentication
 def UserWebRoutes(app,mysql,cursor):
@@ -16,7 +16,7 @@ def UserWebRoutes(app,mysql,cursor):
         @require_session_non_authentication
         def home():
             try:
-                return
+                return redirect('/auth/login');
             except Exception as e:
                 return handle_bad_request(e)
 
@@ -26,8 +26,7 @@ def UserWebRoutes(app,mysql,cursor):
             try:
                 if request.method == "POST":
                     data =request.form
-                    print(data)
-                    result = UserSchema.load(data)
+                    result = userSchema.load(data)
                     return userLogin(cursor,result)
                 if request.method == "GET":
                     return render_template('/auth/login.html')
@@ -78,7 +77,7 @@ def UserWebRoutes(app,mysql,cursor):
         @require_session_authentication
         def app_logout():
             try:
-                session['public_id']=''
+                session['public_id']='';
                 return redirect('/auth/login')
             except Exception as e:
                 return handle_bad_request(e)
@@ -131,7 +130,7 @@ def UserWebRoutes(app,mysql,cursor):
                 return handle_bad_request(e)
             
         # categories routes
-
+def CategoryWebRoutes(app,mysql,cursor):
         @app.route('/app/categories', methods=['GET'])
         @require_session_authentication
         def app_categories():
@@ -140,22 +139,22 @@ def UserWebRoutes(app,mysql,cursor):
                          limit = request.args.get('limit')
                          page = request.args.get('page')
                          result=getCategorysWithPagination(limit,page,cursor)
-                         category=getCurrentCategory(cursor)
-                         return render_template('/app/category/categories.html',page='categories',result=result,user=category , modal_title="Update Category",modal_body="Are you sure ?")
+                         user= getCurrentUser(cursor)
+                         return render_template('/app/category/categories.html',page='categories',result=result,user=user , modal_title="Update Category",modal_body="Are you sure ?")
             except Exception as e:
                 return handle_bad_request(e)
 
         @app.route('/app/category/add', methods=['GET','POST'])
         @require_session_authentication
-        def add_category():
+        def app_category_add():
             try:
-                    category=getCurrentCategory(cursor)
+                    user=getCurrentUser(cursor)
                     if request.method == "GET":
-                        return render_template('/app/category/add_category.html',page='add category',action='/app/category/add',method="POST", user=category,data='')
+                        return render_template('/app/category/add_category.html',page='add category',action='/app/category/add',method="POST", user=user,data='')
                     if request.method == "POST":
                         data =request.form
-                        result = categorySchemaAddcategory.load(data)
-                        return addCategory(mysql,cursor,result, user=category,page='add category',action='/app/category/add',method="POST")
+                        result = CategorySchemaAddcategory.load(data)
+                        return addCategory(mysql,cursor,result,request.files, user=user,page='add category',action='/app/category/add',method="POST")
             except Exception as e:
                 return handle_bad_request(e)
             
@@ -178,8 +177,8 @@ def UserWebRoutes(app,mysql,cursor):
             try:
                 if request.method == "POST":
                     data =request.form
-                    result = categorySchemaUpdatecategory.load(data)
-                    return updateCategory(mysql,cursor,result,category_id)
+                    result = CategorySchemaUpdatecategory.load(data)
+                    return updateCategory(mysql,cursor,result,request.files,category_id)
             except Exception as e:
                 return handle_bad_request(e)
         
@@ -189,7 +188,7 @@ def UserWebRoutes(app,mysql,cursor):
             try:
                 if request.method == "PUT":
                     data =request.get_json(force=True)
-                    categorySchemaUpdatecategory.load(data)
+                    CategorySchemaUpdatecategory.load(data)
                     return activeDeativeCategory(mysql,cursor,category_id,data['is_active'])
             except Exception as e:
                 return handle_bad_request(e)
@@ -200,12 +199,10 @@ def UserWebRoutes(app,mysql,cursor):
         def category_delete(category_id):
             try:
                 if request.method == "DELETE":
-                    result = categorySchemaDeletecategory.load({"category_id":category_id})
+                    result = CategorySchemaDeletecategory.load({"category_id":category_id})
                     return deleteCategory(mysql,cursor,result)
             except Exception as e:
                 return handle_bad_request(e)
-        
-        
             
 
         
@@ -214,8 +211,11 @@ def CustomerWebRoutes(app,mysql,cursor):
         @require_session_authentication
         def app_customers():
             try:
-                    data=getCustomers(cursor)
-                    return render_template('/app/customer/customers.html',page='customers',data=data)
+                    limit = request.args.get('limit')
+                    page = request.args.get('page')
+                    result=getCustomersWithPagination(cursor,limit,page)
+                    user=getCurrentUser(cursor)
+                    return render_template('/app/customer/customers.html',page='customers',result=result,user=user , modal_title="Update Category",modal_body="Are you sure ?")
             except Exception as e:
                 return handle_bad_request(e)
             

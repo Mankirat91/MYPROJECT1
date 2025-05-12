@@ -8,6 +8,17 @@
     "USER_DELETED_SUCCESSFULLY":"User deleted Successfully",
     "USER_ADDED_SUCCESSFULLY":"User added Successfully",
     "USER_UPDATED_SUCCESSFULLY":"User updated Successfully",
+
+    "CUSTOMER_NOT_FOUND":"Customer not found",
+
+    "CATEGORY_NOT_FOUND":"Category not exists",
+    "CATEGORY_IMAGE_NOT_FOUND":"Category image not uploaded",
+    "CATEGORY_IMAGE_INVALID":"Category image is invalid",
+    "CATEGORY_DELETED_SUCCESSFULLY":"Category deleted Successfully",
+    "CATEGORY_ADDED_SUCCESSFULLY":"Category added Successfully",
+    "CATEGORY_UPDATED_SUCCESSFULLY":"Category updated Successfully",
+    
+
     "USER_LOGGED_SUCCESSFULLY":"User loggedIn Successfully",
     "USER_REGISTER_SUCCESSFULLY":"User Register Successfully",
     "PASSWORD_INCORRECT":"Invalid Password",

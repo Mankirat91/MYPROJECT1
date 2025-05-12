@@ -1,11 +1,12 @@
 import base64
-from flask import Response ,jsonify,json,make_response
+from flask import Response ,jsonify,json,make_response,flash
 from werkzeug.exceptions import Conflict, BadRequest
 from Crypto.Cipher import AES
 from datetime import datetime, timedelta
 from Crypto.Hash import SHA256
 import jwt
 import os
+import calendar,time
 
 PAD = "X"
 
@@ -15,12 +16,12 @@ def key_hash(key):
 def encrypt(text, key):
     while len(text) % 32 != 0:
         text += PAD
-    cipher = AES.new(key_hash(key),AES.MODE_CBC)
+    cipher = AES.new(key_hash(key))
     encrypted = cipher.encrypt(text.encode())
     return base64.b64encode(encrypted).decode()
 
 def decrypt(text, key):
-    cipher = AES.new(key_hash(key),AES.MODE_CBC)
+    cipher = AES.new(key_hash(key))
     plain = cipher.decrypt(base64.b64decode(text))
     return plain.decode().rstrip(PAD)
 
@@ -79,6 +80,10 @@ def verifyToken(token):
         return False
 
 
+def get_time_stamp():
+    gmt = time.gmtime()
+    ts = calendar.timegm(gmt)
+    return ts
 
-
-
+def get_extension(filename):
+     return filename.rsplit('.', 1)[1].lower()

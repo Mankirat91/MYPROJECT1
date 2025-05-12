@@ -65,3 +65,9 @@ def require_session_non_authentication(func):
         
     return wrapper
 
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in os.getenv('ALLOWED_EXTENSIONS') 
+
+

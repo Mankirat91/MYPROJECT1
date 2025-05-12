@@ -8,10 +8,7 @@ from services.query import getOneQuery,insertQuery ,getAllQueryWithCondition,exe
 def userLogin(cursor,data):
     try:
         values=(data['email'])
-        print(cursor)
-        print(values)
-        result=getOneQuery(cursor,'SELECT email,password,pubic_id from users WHERE email=%s',values)
-        print(result)
+        result=getOneQuery(cursor,'SELECT * from users WHERE email=%s',values)
         if not result:
              return render_template('/auth/login.html',email=getMessage('EMAIL_INCORRECT'))
         if decrypt(result['password'],os.getenv('CRYPTO_KEY')) != data['password']:
