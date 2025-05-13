@@ -1,13 +1,13 @@
-from flask import Flask ,request ,json, render_template,session,redirect
+from flask import request , render_template,session,redirect
 import os
 from helper import handle_bad_request
 from controller.web.user import userLogin,addUser,getUser,getUsersWithPagination,updateUser,deleteUser,getCurrentUser,activeDeativeUser
-from controller.web.customer import addCustomer, getCustomersWithPagination,updateCustomer
+from controller.web.customer import addCustomer, getCustomer,getCustomersWithPagination,updateCustomer,deleteCustomer,activeDeativeCustomer
 
 from controller.web.category import getCategorysWithPagination,addCategory,deleteCategory,updateCategory,activeDeativeCategory,getCategory
 
 from model.user import userSchema,UserSchemaAddUser,UserSchemaUpdateUser,UserSchemaDeleteUser
-from model.customer import CustomerSchemaAddCustomer,CustomerSchemaUpdateCustomer
+from model.customer import CustomerSchemaAddCustomer,CustomerSchemaUpdateCustomer,CustomerSchemaDeleteCustomer
 from model.category import CategorySchemaAddcategory,CategorySchemaDeletecategory,CategorySchemaUpdatecategory
 
 from middleware.middleware import require_authentication,check_role,require_session_authentication,require_session_non_authentication
@@ -213,7 +213,7 @@ def CustomerWebRoutes(app,mysql,cursor):
             try:
                     limit = request.args.get('limit')
                     page = request.args.get('page')
-                    result=getCustomersWithPagination(cursor,limit,page)
+                    result=getCustomersWithPagination(limit,page,cursor)
                     user=getCurrentUser(cursor)
                     return render_template('/app/customer/customers.html',page='customers',result=result,user=user , modal_title="Update Category",modal_body="Are you sure ?")
             except Exception as e:
@@ -233,16 +233,48 @@ def CustomerWebRoutes(app,mysql,cursor):
             except Exception as e:
                 return handle_bad_request(e)
         
+        @app.route('/app/customer/edit/<customer_id>', methods=['GET'])
+        @require_session_authentication
+        def customer_get(customer_id):
+            try:
+                if request.method == "GET":
+                    data=getCustomer(cursor,customer_id)
+                    user=getCurrentUser(cursor)
+                    return render_template('/app/customer/add_customer.html',page='update customer',action='/app/customer/update/'+customer_id,method="POST", user=user,data=data)
+            except Exception as e:
+                return handle_bad_request(e)
+        
         @app.route('/app/customer/update/<customer_id>', methods=['GET','POST'])
         @require_session_authentication
-        def app_customer_update():
+        def app_customer_update(customer_id):
             try:
                     if request.method == "GET":
                         return render_template('/app/customer/add_customer.html',page='update customer')
                     if request.method == "POST":
                         data =request.form
                         result = CustomerSchemaUpdateCustomer.load(data)
-                        return updateCustomer(mysql,cursor,result)
+                        return updateCustomer(mysql,cursor,result,customer_id)
+            except Exception as e:
+                return handle_bad_request(e)
+            
+        @app.route('/app/customer/active/<customer_id>', methods=['PUT'])
+        @require_session_authentication
+        def customer_active_deactive(customer_id):
+            try:
+                if request.method == "PUT":
+                    data =request.get_json(force=True)
+                    CustomerSchemaUpdateCustomer.load(data)
+                    return activeDeativeCustomer(mysql,cursor,customer_id,data['is_active'])
+            except Exception as e:
+                return handle_bad_request(e)
+        
+        @app.route('/app/customer/delete/<customer_id>', methods=['DELETE'])
+        @require_session_authentication 
+        def customer_delete(customer_id):
+            try:
+                if request.method == "DELETE":
+                    result = CustomerSchemaDeleteCustomer.load({"customer_id":customer_id})
+                    return deleteCustomer(mysql,cursor,result)
             except Exception as e:
                 return handle_bad_request(e)
 

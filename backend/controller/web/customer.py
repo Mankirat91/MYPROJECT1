@@ -1,5 +1,5 @@
 from helper import getMessage,sendResponse,handle_bad_request
-from flask import render_template
+from flask import render_template,redirect,flash
 import uuid
 import os
 from helper import encrypt
@@ -20,10 +20,10 @@ def addCustomer(mysql,cursor,data):
     
 def getCustomer(cursor,customerid):
     try:
-        result=getOneQuery(cursor,'SELECT id,email from customers WHERE id=%s',(customerid))
+        result=getOneQuery(cursor,'SELECT id,first_name,last_name,email from customers WHERE id=%s',(customerid))
         if not result:
             raise Exception(getMessage('customer_NOT_FOUND'))
-        return sendResponse("",result)
+        return result
     except Exception as e:
         return handle_bad_request(e)
     
@@ -39,19 +39,20 @@ def getCustomers(cursor):
         return handle_bad_request(e)
     
     
-def updateCustomer(mysql,cursor,data):
+def updateCustomer(mysql,cursor,data,customer_id):
     try:
         if "email" in data:
-            result=getOneQuery(cursor,'SELECT email from customers WHERE email=%s AND id != %s',(data['email'],data['customer_id']))
+            result=getOneQuery(cursor,'SELECT email from customers WHERE email=%s AND id != %s',(data['email'],customer_id))
             if   result:
                 raise Exception(getMessage('EMAIL_ALREADY_EXISTS'))
         fields=''
         for k, v in data.items():
             if k == 'password':
                 v = encrypt(v,os.getenv('CRYPTO_KEY'))
-                fields += k + '="'+v+'",'
-            result=execQuery(mysql,cursor,'UPDATE  customers  SET '+fields.rstrip(',')+' WHERE id=%s',(data['customer_id']))
-            return result
+            fields += k + '="'+v+'",'
+        result=execQuery(mysql,cursor,'UPDATE  customers  SET '+fields.rstrip(',')+' WHERE id=%s',(customer_id))
+        flash(getMessage('CUSTOMER_UPDATED_SUCCESSFULLY') )
+        return redirect('/app/customers')
     except Exception as e:
         return handle_bad_request(e)
     
@@ -71,4 +72,28 @@ def getCustomersWithPagination(limit,page,cursor):
         return result
     except Exception as e:
         return handle_bad_request(e)
+    
+def activeDeativeCustomer(mysql,cursor,customer_id,is_active):
+    try:
+        result=getOneQuery(cursor,'SELECT email from customers WHERE id = %s',(customer_id))
+        if  result:   
+            result=execQuery(mysql,cursor,'UPDATE  customers  SET is_active=%s WHERE id=%s',(is_active,customer_id))
+            flash(getMessage('CUSTOMER_UPDATED_SUCCESSFULLY'))
+            return {"updated":True }
+        flash(getMessage('CUSTOMER_NOT_FOUND') )
+        return {"updated":False }
+    except Exception as e:
+        return handle_bad_request(e)
+    
+
+def deleteCustomer(mysql,cursor,data):
+    try:
+        exist=getOneQuery(cursor,'SELECT email from customers WHERE id=%s',(data['customer_id']))
+        if exist:
+             execQuery(mysql,cursor,'DELETE from customers WHERE id=%s',(data['customer_id']))
+             flash(getMessage('CUSTOMER_DELETED_SUCCESSFULLY') )
+             return redirect('/app/customers')
+        raise Exception(getMessage('CUSTOMER_NOT_FOUND'))
+    except Exception as e:
+        return handle_bad_request(e)   
     

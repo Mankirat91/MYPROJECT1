@@ -13,7 +13,6 @@ class CustomerSchemaAddCustomer(Schema):
 
 
 class CustomerSchemaUpdateCustomer(Schema):
-      customer_id = fields.Number(required=True,error_messages={"required": "Customer id is required"})
       email = fields.Email(required=False,error_messages={"required": "Email is required"})
       first_name = fields.String(required=False)
       last_name = fields.String(required=False)

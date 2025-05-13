@@ -27,13 +27,13 @@
               </select>
             </div>
           </div>
-          <div class="select-position select-sm">
+          <!-- <div class="select-position select-sm">
             <a
               href="/app/customer/add"
               class="main-btn primary-btn rounded-full btn-hover"
               >Add Customer</a
             >
-          </div>
+          </div> -->
           <!-- end select -->
         </div>
       </div>
@@ -46,7 +46,7 @@
           <div class="col-lg-12">
             <div class="card-style mb-30">
               {% include "includes/success_message.html" %}
-              <h6 class="mb-10">Users</h6>
+              <h6 class="mb-10">Customers</h6>
               <div class="table-wrapper table-responsive">
                 <table class="table">
                   <thead>
@@ -93,10 +93,10 @@
                       </td>
                       <td>
                         <div class="action">
-                          <a class="edit" href="/app/user/edit/{{dat.id}}">
+                          <a class="edit" href="/app/customer/edit/{{dat.id}}">
                             <i class="lni lni-pencil"></i>
                           </a>
-                            <button  id="remove-user" type="btn" class="text-danger" data-id="{{dat.id}}">
+                            <button  id="remove-customer" type="btn" class="text-danger" data-id="{{dat.id}}">
                               <i class="lni lni-trash-can"></i>
                             </button>
                         </div>
@@ -150,13 +150,13 @@
 
   
   var limit = document.querySelector("#limit");
-  var rmv = document.querySelectorAll("#remove-user");
+  var rmv = document.querySelectorAll("#remove-customer");
   
   var toggleSwitch2 = document.querySelectorAll("#toggleSwitch2");
   var modal = document.querySelector("#customModal");
   limit.addEventListener("change", () => {
     window.location.replace(
-      window.location.origin + `/app/users?limit=${limit.value}`
+      window.location.origin + `/app/customers?limit=${limit.value}`
     );
   });
   
@@ -193,10 +193,10 @@
         is_active = true;
       }
       var data = await fetch(
-        window.location.origin + `/app/user/active/` + data_id,
+        window.location.origin + `/app/customer/active/` + data_id,
         { method: "PUT", body: JSON.stringify({ is_active }) }
       );
-      window.location.replace(window.location.origin + `/app/users`);
+      window.location.replace(window.location.origin + `/app/customers`);
     } catch (e) {
     }
   }
@@ -204,10 +204,10 @@
   async function deleteUser(data_id) {
     try {
       var data = await fetch(
-        window.location.origin + `/app/user/delete/` + data_id,
+        window.location.origin + `/app/customer/delete/` + data_id,
         { method: "DELETE", body: ""}
       );
-      window.location.replace(window.location.origin + `/app/users`);
+      window.location.replace(window.location.origin + `/app/customers`);
     } catch (e) {
     }
   }
