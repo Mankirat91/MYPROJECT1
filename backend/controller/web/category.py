@@ -28,7 +28,6 @@ def addCategory(mysql,cursor,data,files, user,page,action,method):
              return redirect('/app/categories')
         return render_template('/app/category/add_category.html',message=getMessage('CATEGORY_ALREADY_EXISTS') , success=False,user=user,data='',page=page,action=action,method=method)
     except Exception as e:
-         print(e)
          return render_template('/app/category/add_category.html',message=e.args[0], success=False,user=user,data='',page=page,action=action,method=method)
     
 
@@ -104,8 +103,6 @@ def getCategorysWithPagination(limit,page,cursor):
         offset=int(limit)*int(page)-int(limit)
         total=getAllQueryWithCondition(cursor,'SELECT COUNT(*) from categories',())
         data=getAllQueryWithCondition(cursor,'SELECT id,name,link,image , is_active from categories  LIMIT %s OFFSET %s',(int(limit),int(offset)))
-        print(data)
-        print(total)
         if not data:
             message=getMessage('CATEGORY_NOT_FOUND')
             return message

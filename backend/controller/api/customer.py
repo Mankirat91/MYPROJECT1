@@ -15,7 +15,8 @@ def customerLogin(cursor,data):
         if result['is_active'] == False:
             raise Exception(getMessage('CUSTOMER_IS_NOT_ACTIVE'))
         token=generateToken(result['pubic_id'])
-        sendResponse(getMessage('USER_LOGGED_SUCCESSFULLY'),{"token":token})
+        return sendResponse(getMessage('USER_LOGGED_SUCCESSFULLY'),{"token":token,
+                "user":{"first_name":result['first_name'],"last_name":result['last_name']} })
     except Exception as e:
         return handle_bad_request(e)
 

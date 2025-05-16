@@ -3,12 +3,16 @@ import os
 from helper import handle_bad_request
 from controller.web.user import userLogin,addUser,getUser,getUsersWithPagination,updateUser,deleteUser,getCurrentUser,activeDeativeUser
 from controller.web.customer import addCustomer, getCustomer,getCustomersWithPagination,updateCustomer,deleteCustomer,activeDeativeCustomer
+from controller.web.product import getProductsWithPagination,addProduct
 
 from controller.web.category import getCategorysWithPagination,addCategory,deleteCategory,updateCategory,activeDeativeCategory,getCategory
 
 from model.user import userSchema,UserSchemaAddUser,UserSchemaUpdateUser,UserSchemaDeleteUser
 from model.customer import CustomerSchemaAddCustomer,CustomerSchemaUpdateCustomer,CustomerSchemaDeleteCustomer
 from model.category import CategorySchemaAddcategory,CategorySchemaDeletecategory,CategorySchemaUpdatecategory
+from model.product import ProductSchemaAddproduct
+
+
 
 from middleware.middleware import require_authentication,check_role,require_session_authentication,require_session_non_authentication
 def UserWebRoutes(app,mysql,cursor):
@@ -203,6 +207,82 @@ def CategoryWebRoutes(app,mysql,cursor):
                     return deleteCategory(mysql,cursor,result)
             except Exception as e:
                 return handle_bad_request(e)
+            
+
+        # product routes
+def ProductWebRoutes(app,mysql,cursor):
+        @app.route('/app/products', methods=['GET'])
+        @require_session_authentication
+        def app_products():
+            try:
+                    if request.method == "GET":
+                         limit = request.args.get('limit')
+                         page = request.args.get('page')
+                         result=getProductsWithPagination(limit,page,cursor)
+                         user= getCurrentUser(cursor)
+                         return render_template('/app/product/products.html',page='products',result=result,user=user , modal_title="Update Product",modal_body="Are you sure ?")
+            except Exception as e:
+                return handle_bad_request(e)
+
+        @app.route('/app/product/add', methods=['GET','POST'])
+        @require_session_authentication
+        def app_product_add():
+            try:
+                    user=getCurrentUser(cursor)
+                    if request.method == "GET":
+                        return render_template('/app/product/add_product.html',page='add product',action='/app/product/add',method="POST", user=user,data='')
+                    if request.method == "POST":
+                        data =request.form
+                        result = ProductSchemaAddproduct.load(data)
+                        return addProduct(mysql,cursor,result,request.files, user=user,page='add product',action='/app/product/add',method="POST")
+            except Exception as e:
+                return handle_bad_request(e)
+            
+        
+        # @app.route('/app/category/edit/<category_id>', methods=['GET'])
+        # @require_session_authentication
+        # def product_get(category_id):
+        #     try:
+        #         if request.method == "GET":
+        #             data=getCategory(cursor,category_id)
+        #             user=getCurrentUser(cursor)
+        #             return render_template('/app/category/add_category.html',page='update category',action='/app/category/update/'+category_id,method="POST", user=user,data=data)
+        #     except Exception as e:
+        #         return handle_bad_request(e)
+            
+
+        # @app.route('/app/category/update/<category_id>', methods=['POST'])
+        # @require_session_authentication
+        # def product_update(category_id):
+        #     try:
+        #         if request.method == "POST":
+        #             data =request.form
+        #             result = CategorySchemaUpdatecategory.load(data)
+        #             return updateCategory(mysql,cursor,result,request.files,category_id)
+        #     except Exception as e:
+        #         return handle_bad_request(e)
+        
+        # @app.route('/app/category/active/<category_id>', methods=['PUT'])
+        # @require_session_authentication
+        # def product_active_deactive(category_id):
+        #     try:
+        #         if request.method == "PUT":
+        #             data =request.get_json(force=True)
+        #             CategorySchemaUpdatecategory.load(data)
+        #             return activeDeativeCategory(mysql,cursor,category_id,data['is_active'])
+        #     except Exception as e:
+        #         return handle_bad_request(e)
+            
+
+        # @app.route('/app/category/delete/<category_id>', methods=['DELETE'])
+        # @require_session_authentication 
+        # def category_delete(category_id):
+        #     try:
+        #         if request.method == "DELETE":
+        #             result = CategorySchemaDeletecategory.load({"category_id":category_id})
+        #             return deleteCategory(mysql,cursor,result)
+        #     except Exception as e:
+        #         return handle_bad_request(e)
             
 
         
