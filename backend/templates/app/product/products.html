@@ -31,7 +31,7 @@
             <a
               href="/app/product/add"
               class="main-btn primary-btn rounded-full btn-hover"
-              >Add Category</a
+              >Add Product</a
             >
           </div>
           <!-- end select -->
@@ -51,7 +51,8 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>#</th>
+                      <th>Thumb</th>
+                      <th>Full</th>
                       <th>Name</th>
                       <th>Link</th>
                       <th>Active</th>
@@ -66,7 +67,8 @@
                     {% else %}
                     {% for dat in result.data %}
                     <tr>
-                      <td><img class="thumb-img" src="{{ url_for('static', filename='uploads/product/'+dat.image) }}"/></td>
+                      <td><img class="thumb-img" src="{{ url_for('static', filename='uploads/product/thumb/'+dat.thumbnail_image) }}"/></td>
+                      <td><img class="thumb-img" src="{{ url_for('static', filename='uploads/product/full/'+dat.full_image) }}"/></td>
                       <td>{{dat.name}}</td>
                       <td>{{dat.link}}</td>
                       <td>
@@ -186,7 +188,7 @@
      window.event.preventDefault()
      if(check){
         var data_id = re.getAttribute("data-id");
-        await deleteCategory(data_id);
+        await deleteProduct(data_id);
      }
   });
   })
@@ -205,18 +207,18 @@
         window.location.origin + `/app/product/active/` + data_id,
         { method: "PUT", body: JSON.stringify({ is_active }) }
       );
-      window.location.replace(window.location.origin + `/app/categories`);
+      window.location.replace(window.location.origin + `/app/products`);
     } catch (e) {
     }
   }
 
-  async function deleteCategory(data_id) {
+  async function deleteProduct(data_id) {
     try {
       var data = await fetch(
         window.location.origin + `/app/product/delete/` + data_id,
         { method: "DELETE", body: ""}
       );
-      window.location.replace(window.location.origin + `/app/categories`);
+      window.location.replace(window.location.origin + `/app/products`);
     } catch (e) {
     }
   }

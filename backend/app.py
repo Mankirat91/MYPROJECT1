@@ -14,7 +14,7 @@ CORS(app, resources={ r"/*":{ "origins":"*" }})
 app.secret_key = os.getenv('SESSION_SECRET_KEY')
 mysql = MySQL(app,host=os.getenv('DB_HOST'),user=os.getenv('DB_USER'),password=os.getenv('DB_PASSWORD'),db=os.getenv('DB_NAME'), autocommit=True, cursorclass=pymysql.cursors.DictCursor)
 mysql.init_app(app)
-with app.app_context():
+with app.test_request_context():
     cursor =mysql.get_db().cursor()
     # categoryMigration(mysql,cursor)
     # productMigration(mysql,cursor)

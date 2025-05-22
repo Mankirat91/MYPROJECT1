@@ -7,6 +7,9 @@ from services.query import getOneQuery,insertQuery ,getAllQueryWithCondition,exe
 
 def addCategory(mysql,cursor,data,files, user,page,action,method):
     try:
+        result=getOneQuery(cursor,'SELECT name from categories WHERE name=%s',(data['name']))
+        if  result:
+            return render_template('/app/category/add_category.html',message=getMessage('CATEGORY_ALREADY_EXISTS') , success=False,user=user,data='',page=page,action=action,method=method)
         if 'image' not in files:
             flash(getMessage('CATEGORY_IMAGE_NOT_FOUND'))
         file = files['image']
@@ -17,23 +20,20 @@ def addCategory(mysql,cursor,data,files, user,page,action,method):
             filename=get_time_stamp()
             current_dir = os.getcwd()
             file.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_CATEGORY') ,str(filename)+'.'+ext))
-        result=getOneQuery(cursor,'SELECT name from categories WHERE name=%s',(data['name']))
-        if not result:
-             name=data['name']
-             qry='INSERT into  categories  (name,link,image) VALUES (%s,%s,%s)'
-             values=(name,name.replace(" ", "-").lower(),str(filename)+'.'+ext)
-             insertQuery(mysql,cursor,qry,values)
-             result=getOneQuery(cursor,'SELECT name from categories WHERE email=%s',(data['name']))
-             flash(getMessage('CATEGORY_ADDED_SUCCESSFULLY') )
-             return redirect('/app/categories')
-        return render_template('/app/category/add_category.html',message=getMessage('CATEGORY_ALREADY_EXISTS') , success=False,user=user,data='',page=page,action=action,method=method)
+            name=data['name']
+            qry='INSERT into  categories  (name,link,image) VALUES (%s,%s,%s)'
+            values=(name,name.replace(" ", "-").lower(),str(filename)+'.'+ext)
+            insertQuery(mysql,cursor,qry,values)
+            result=getOneQuery(cursor,'SELECT name from categories WHERE email=%s',(data['name']))
+            flash(getMessage('CATEGORY_ADDED_SUCCESSFULLY') )
+            return redirect('/app/categories')
+        
     except Exception as e:
          return render_template('/app/category/add_category.html',message=e.args[0], success=False,user=user,data='',page=page,action=action,method=method)
     
 
 def updateCategory(mysql,cursor,data,files,category_id):
     try:
-
         if "name" in data:
             result=getOneQuery(cursor,'SELECT name from categories WHERE name=%s AND id != %s',(data['name'],category_id))
             if  result:
@@ -55,7 +55,6 @@ def updateCategory(mysql,cursor,data,files,category_id):
         flash(getMessage('CATEGORY_UPDATED_SUCCESSFULLY') )
         return redirect('/app/categories')
     except Exception as e:
-        print(e)
         return handle_bad_request(e)
     
 
@@ -90,6 +89,14 @@ def getCategory(cursor,categoryid):
         if not result:
             raise Exception(getMessage('CATEGORY_NOT_FOUND'))
         return result
+    except Exception as e:
+        return handle_bad_request(e)
+    
+
+def getCategories(cursor):
+    try:
+        data=getAllQueryWithCondition(cursor,'SELECT id,name from categories  WHERE  is_active = %s',(True))
+        return data
     except Exception as e:
         return handle_bad_request(e)
     

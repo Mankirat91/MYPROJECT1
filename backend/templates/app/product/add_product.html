@@ -29,7 +29,7 @@
                   <li class="breadcrumb-item">
                     <a href="/app/dashboard">Dashboard</a>
                   </li>
-                  <li class="breadcrumb-item"><a href="/app/users">Categories</a></li>
+                  <li class="breadcrumb-item"><a href="/app/products">Products</a></li>
                   <li style="text-transform: capitalize;" class="breadcrumb-item active" aria-current="page">
                     {{page}}
                   </li>
@@ -69,13 +69,51 @@
                     <label>Name</label>
                     <input type="text" name="name" placeholder="Name" value="{{data.name}}" required>
                   </div>
+                  <div class="select-style-1">
+                    <label>Categories</label>
+                    <div class="select-position">
+                    <select  name="category_id" placeholder="Category" value="{{data.category_id}}" required>
+                      {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  </div>
                   <div class="input-style-1">
-                    <label>Image</label>
+                    <label>Thumb Image</label>
                     {% if data  %}
-                    <input type="file" name="image" placeholder="Image" value="{{data.image}}"  accept="image/png,image/jpg" >
+                    <input type="file" name="thumbnail_image" placeholder="Image" value="{{data.thumbnail_image}}"  accept="image/png,image/jpg" >
                     {% else %}
-                    <input type="file" name="image" placeholder="Image" value="{{data.image}}" required accept="image/png,image/jpg" >
+                    <input type="file" name="thumbnail_image" placeholder="Image" value="{{data.thumbnail_image}}" required accept="image/png,image/jpg" >
                     {% endif %}
+                  </div>
+                  <div class="input-style-1">
+                    <label>Full Image</label>
+                    {% if data  %}
+                    <input type="file" name="full_image" placeholder="Image" value="{{data.full_image}}"  accept="image/png,image/jpg" >
+                    {% else %}
+                    <input type="file" name="full_image" placeholder="Image" value="{{data.full_image}}" required accept="image/png,image/jpg" >
+                    {% endif %}
+                  </div>
+                  <div class="input-style-1">
+                    <label>Short Description</label>
+                    <textarea  name="short_description" placeholder="Short Description" rows="2" cols="5"   required>
+                      {{data.short_description}}
+                    </textarea>
+                  </div>
+                  <div class="input-style-1">
+                    <label>Full Description</label>
+                    <textarea  name="full_description" placeholder="Full Description"  rows="10" cols="20" required>
+                      {{data.full_description}}
+                    </textarea>
+                  </div>
+                  <div class="input-style-1">
+                    <label>Qty</label>
+                    <input type="number"  name="qty" placeholder="Qty"  value="{{data.qty}}" required/>
+                  </div>
+                  <div class="input-style-1">
+                    <label>Price</label>
+                    <input  type="number"  name="price" placeholder="Price"  value="{{data.price}}" required/>
                   </div>
                   <div class="input-style-1">
                   <div class="select-position select-sm">

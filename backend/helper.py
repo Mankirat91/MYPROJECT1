@@ -1,12 +1,12 @@
 import base64
-from flask import Response ,jsonify,json,make_response,flash
+from flask import jsonify,json,make_response,flash
 from werkzeug.exceptions import Conflict, BadRequest
 from Crypto.Cipher import AES
 from datetime import datetime, timedelta
 from Crypto.Hash import SHA256
 import jwt
 import os
-import calendar,time
+from time import time
 
 PAD = "X"
 
@@ -81,9 +81,11 @@ def verifyToken(token):
 
 
 def get_time_stamp():
-    gmt = time.gmtime()
-    ts = calendar.timegm(gmt)
-    return ts
+    milliseconds = int(time() * 1000)
+    return milliseconds
 
 def get_extension(filename):
      return filename.rsplit('.', 1)[1].lower()
+
+
+
