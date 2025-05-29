@@ -1,32 +1,28 @@
 from helper import sendResponse, handle_bad_request,sendResponseByStatus,getMessage
-from flask import Flask ,request ,jsonify,session,redirect
+from flask import Flask ,request ,flash,session,redirect
 from functools import wraps
 from services.query import getOneQuery 
 from helper import set_cookie_value,get_cookie_value,verifyToken
 import os
-def is_user_logged_in(roles,data,message):
-        try:
-            cookie= get_cookie_value(request,'loggedIn')
-            if(int(cookie) == 1):
-                return check_role(roles,message,data)
-            else:
-                return sendResponseByStatus(getMessage('UNAUTHORIZED'),401)
-        except Exception as e:
-            return handle_bad_request(e)
             
 
-def check_role(role=None,cursor=None):
-    def decrorate_role(func):
+def check_super_admin_role(cursor,redirectR):
+    def decorator(func):
         @wraps(func)
-        def wrapper(args,**kwargs):
-             sql_check="SELECT * from  users WHERE  role = %s"
-             values=(role)
-             data=getOneQuery(cursor,sql_check,values)
-             if not data:
-                return redirect('/auth/login') 
-             return func(args,**kwargs)
+        def wrapper(**kwargs):
+            try:
+                public_id=session.get("public_id")
+                sql_check="SELECT * from  users WHERE  role = %s AND pubic_id = %s"
+                values=(1,public_id)
+                data=getOneQuery(cursor,sql_check,values)
+                if data:
+                    return func( **kwargs) 
+                else:
+                    raise Exception(getMessage('UNAUTHORIZED'))
+            except Exception as e:
+                return handle_bad_request(e)
         return wrapper
-    return decrorate_role
+    return decorator
         
 
 

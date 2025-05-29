@@ -4,9 +4,10 @@ from helper import getMessage,sendResponseByStatus,handle_bad_request
 from controller.api.customer import customerLogin,customerRegister
 
 from controller.api.category import getCategories
+from controller.api.product import getProductsByCategory,getProductsAll
 
 from model.customer import CustomerSchema,CustomerSchemaAddCustomer
-from middleware.middleware import require_authentication,check_role,require_session_authentication,require_session_non_authentication
+from middleware.middleware import require_authentication,check_super_admin_role,require_session_authentication,require_session_non_authentication
 
 def ApiCustomerRoutes(app,mysql,cursor):
     @app.route('/api/customer/login', methods=['POST'])
@@ -59,6 +60,26 @@ def ApiCategoryRoutes(app,mysql,cursor):
                 return customerRegister(mysql,cursor)
         except Exception as e:
             return handle_bad_request(e)
+
+def ApiProductRoutes(app,mysql,cursor):
+    @app.route('/api/products/<category_id>', methods=['GET'])
+    def products_category_get(category_id):
+        try:
+                return getProductsByCategory(category_id,cursor)
+        except Exception as e:
+            return handle_bad_request(e)
+    
+    @app.route('/api/products/all', methods=['POST'])
+    def products_get():
+        try:
+                data = request.get_json(force=True)
+                return getProductsAll(cursor,data)
+        except Exception as e:
+            return handle_bad_request(e)
+        
+
+        
+
         
 
    

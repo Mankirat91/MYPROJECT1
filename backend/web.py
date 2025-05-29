@@ -14,7 +14,7 @@ from model.product import ProductSchemaAddproduct,ProductSchemaUpdateproduct,Pro
 
 
 
-from middleware.middleware import require_session_authentication,require_session_non_authentication
+from middleware.middleware import require_session_authentication,require_session_non_authentication,check_super_admin_role
 
 def DashboardWebRoutes(app,cursor):
         @app.route('/app/dashboard', methods=['GET'])
@@ -269,6 +269,7 @@ def ProductWebRoutes(app,mysql,cursor):
             
         @app.route('/app/product/active/<product_id>', methods=['PUT'])
         @require_session_authentication
+        @check_super_admin_role(cursor,'/app/products')
         def product_active_deactive(product_id):
             try:
                 if request.method == "PUT":

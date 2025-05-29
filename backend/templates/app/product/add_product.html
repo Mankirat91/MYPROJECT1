@@ -72,9 +72,13 @@
                   <div class="select-style-1">
                     <label>Categories</label>
                     <div class="select-position">
-                    <select  name="category_id" placeholder="Category" value="{{data.category_id}}" required>
+                    <select  name="category_id" placeholder="Category"  value="{{data.category_id}}" required>
                       {% for category in categories %}
-                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% if category.id == data.category_id %} 
+                           <option selected value="{{category.id}}">{{category.name}}</option>
+                        {% else %}
+                           <option  value="{{category.id}}">{{category.name}}</option>
+                        {% endif %}
                       {% endfor %}
                     </select>
                   </div>
@@ -97,15 +101,11 @@
                   </div>
                   <div class="input-style-1">
                     <label>Short Description</label>
-                    <textarea  name="short_description" placeholder="Short Description" rows="2" cols="5"   required>
-                      {{data.short_description}}
-                    </textarea>
+                    <textarea  name="short_description" placeholder="Short Description" rows="5" required>{{data.short_description}}</textarea>
                   </div>
                   <div class="input-style-1">
                     <label>Full Description</label>
-                    <textarea  name="full_description" placeholder="Full Description"  rows="10" cols="20" required>
-                      {{data.full_description}}
-                    </textarea>
+                    <textarea  name="full_description" placeholder="Full Description"  rows="10"  required>{{data.full_description}}</textarea>
                   </div>
                   <div class="input-style-1">
                     <label>Qty</label>
@@ -152,43 +152,6 @@
                   </div> -->
                   <!-- end select -->
                 </div>
-                <!-- end card -->
-                <!-- ======= select style end ======= -->
-
-                <!-- ======= select style start ======= -->
-                <!-- <div class="card-style mb-30">
-                  <h6 class="mb-25">Time and Date</h6>
-                  <div class="input-style-1">
-                    <label>Date</label>
-                    <input type="date">
-                  </div> -->
-                  <!-- end input -->
-                  <!-- <div class="input-style-2">
-                    <input type="date">
-                    <span class="icon"><i class="lni lni-chevron-down"></i></span>
-                  </div> -->
-                  <!-- end input -->
-                  <!-- <div class="input-style-2">
-                    <input type="time">
-                  </div> -->
-                  <!-- end input -->
-                <!-- </div> -->
-                <!-- end card -->
-                <!-- ======= input style end ======= -->
-
-                <!-- ======= input switch style start ======= -->
-                <!-- <div class="card-style mb-30">
-                  <h6 class="mb-25">Toggle switch input</h6>
-                  <div class="form-check form-switch toggle-switch mb-30">
-                    <input class="form-check-input" type="checkbox" id="toggleSwitch1">
-                    <label class="form-check-label" for="toggleSwitch1">Default switch checkbox input</label>
-                  </div>
-                  <div class="form-check form-switch toggle-switch">
-                    <input class="form-check-input" type="checkbox" id="toggleSwitch2" checked="">
-                    <label class="form-check-label" for="toggleSwitch2">Default switch checkbox input</label>
-                  </div>
-                </div> -->
-                <!-- ======= input switch style end ======= -->
               </div>
             <!-- end card -->
           <!-- end col -->

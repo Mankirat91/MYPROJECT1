@@ -45,40 +45,34 @@ def addProduct(mysql,cursor,data,files, user,page,action,method):
 
 def updateProduct(mysql,cursor,data,files,product_id):
     try:
-        print(data)
         if "name" in data:
             result=getOneQuery(cursor,'SELECT name from products WHERE name=%s AND id != %s',(data['name'],product_id))
             if  result:
                 return render_template('/app/product/add_product.html',message=getMessage('PRODUCT_ALREADY_EXISTS') , success=False )
-        if 'thumbnail_image' not in files:
-            flash(getMessage('PRODUCT_THUMB_IMAGE_NOT_FOUND'))
-        if 'full_image' not in files:
-            flash(getMessage('PRODUCT_FULL_IMAGE_NOT_FOUND'))
         thumbnail_image = files['thumbnail_image']
         full_image = files['full_image']
-        if thumbnail_image.filename == '':
-            flash(getMessage('PRODUCT_THUMB_IMAGE_NOT_FOUND'))
-        if full_image.filename == '':
-            flash(getMessage('PRODUCT_FULL_IMAGE_NOT_FOUND'))
-        if thumbnail_image and allowed_file(thumbnail_image.filename) and full_image and allowed_file(full_image.filename):
-            resu=getOneQuery(cursor,'SELECT thumbnail_image,full_image from products WHERE id=%s',(product_id))
+        if thumbnail_image and allowed_file(thumbnail_image.filename):
+            resu=getOneQuery(cursor,'SELECT thumbnail_image from products WHERE id=%s',(product_id))
             ext_thumb=get_extension(thumbnail_image.filename)
-            ext_full=get_extension(full_image.filename)
             filename_thumb=get_time_stamp()
+            current_dir = os.getcwd()
+            thumbnail_image.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/thumb' ,str(filename_thumb)+'_thumb.'+ext_thumb))
+            os.remove(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/thumb' +'/'+resu['thumbnail_image'])
+            data['thumbnail_image']=str(filename_thumb)+'_thumb.'+ext_thumb
+        if full_image and allowed_file(full_image.filename):
+            resu=getOneQuery(cursor,'SELECT full_image from products WHERE id=%s',(product_id))
+            ext_full=get_extension(full_image.filename)
             filename_full=get_time_stamp()
             current_dir = os.getcwd()
-            thumbnail_image.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/thumb' ,str(filename_thumb)+'.'+ext_thumb))
-            full_image.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/full' ,str(filename_full)+'.'+ext_full))
-            os.remove(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/thumb' +'/'+resu['thumbnail_image'])
+            full_image.save(os.path.join(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/full' ,str(filename_full)+'_full.'+ext_full))
             os.remove(current_dir + os.getenv('UPLOAD_FOLDER_PRODUCT')+'/full' +'/'+resu['full_image'])
-            data['thumbnail_image']=str(filename_thumb)+'.'+ext_thumb
-            data['full_image']=str(filename_full)+'.'+ext_full
-            fields=''
-            for k, v in data.items():
-                fields += k + '="'+v+'",'
-            result=execQuery(mysql,cursor,'UPDATE  products  SET '+fields.rstrip(',')+' WHERE id=%s',(product_id))
-            flash(getMessage('PRODUCT_UPDATED_SUCCESSFULLY') )
-            return redirect('/app/products')
+            data['full_image']=str(filename_full)+'_full.'+ext_full
+        fields=''
+        for k, v in data.items():
+            fields += k + '="'+str(v)+'",'
+        result=execQuery(mysql,cursor,'UPDATE  products  SET '+fields.rstrip(',')+' WHERE id=%s',(product_id))
+        flash(getMessage('PRODUCT_UPDATED_SUCCESSFULLY') )
+        return redirect('/app/products')
     except Exception as e:
          print(e)
          return handle_bad_request(e)
