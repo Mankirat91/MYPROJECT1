@@ -3,7 +3,7 @@ from marshmallow import Schema, fields
 
 class CategorySchemaAddcategory(Schema):
       name = fields.String(required=True)
-      image = fields.Raw(type='file')
+      image = fields.Raw()
 
 class CategorySchemaUpdatecategory(Schema):
       name = fields.String(required=False)

@@ -73,6 +73,7 @@ def ApiProductRoutes(app,mysql,cursor):
     def products_get():
         try:
                 data = request.get_json(force=True)
+                print(data)
                 return getProductsAll(cursor,data)
         except Exception as e:
             return handle_bad_request(e)

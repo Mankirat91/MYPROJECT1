@@ -15,6 +15,7 @@ def getProductsAll(cursor,filter):
     try:
         qry ='SELECT p.name,p.link, p.thumbnail_image,p.short_description,p.price,p.qty, c.name as category_name  from products p LEFT JOIN categories c ON  p.category_id = c.id WHERE  p.is_active = %s AND c.is_active = %s'
         values =(True,True)
+      
         # filter.items()
         if "cat_id" in filter:
             qry += ' AND p.category_id = % s'
